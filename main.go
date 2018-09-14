@@ -27,10 +27,11 @@ package main
 
 import (
 	hand "FindByFFL/handlers"
-	"github.com/gorilla/mux"
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 var templates *template.Template
@@ -47,8 +48,8 @@ func main() {
 
 	log.Println("Online Account Creator!")
 	log.Println("Listening on :8070...")
-	http.ListenAndServe(":8070", router)
+	//http.ListenAndServe(":8070", router)
 	//http.ListenAndServeTLS(":8070", "certLocal.pem", "keyLocal.pem", router)
-	//http.ListenAndServeTLS(":8070", "cert.pem", "key.pem", router)
+	http.ListenAndServeTLS(":8070", "cert.pem", "key.pem", router)
 
 }
