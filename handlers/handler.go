@@ -53,7 +53,6 @@ func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	// PrivateKey: Your application's private key.
 	// Token: The 3dcart merchant's token.
 	//<iframe src="https://localhost:8070?cart=3dcar&carturl=[store_url]"></iframe>
-	//<iframe src="https://localhost:8070?cart=3dcar&carturl=[store_url]"></iframe>
 
 	secureURL := r.Header.Get("SecureUrl")
 	privateKey := r.Header.Get("PrivateKey")
