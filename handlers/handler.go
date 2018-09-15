@@ -26,13 +26,17 @@
 package handlers
 
 import (
+	usession "github.com/Ulbora/go-better-sessions"
+	"github.com/gorilla/sessions"
 	"html/template"
+	"log"
 	"net/http"
 )
 
 //Handler Handler
 type Handler struct {
 	Templates *template.Template
+	Sess      usession.Session
 }
 
 //PageParams PageParams
@@ -44,25 +48,39 @@ type PageParams struct {
 	Token   string
 }
 
+func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
+	session, err := h.Sess.GetSession(r)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	return session
+}
+
 //HandleIndex HandleIndex
 func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
+	h.Sess.InitSessionStore(w, r)
 	var cart = r.URL.Query().Get("cart")
 	var carturl = r.URL.Query().Get("carturl")
-
+	session := h.getSession(w, r)
+	session.Values["cart"] = cart
+	session.Values["carturl"] = carturl
+	serr := session.Save(r, w)
+	log.Println(serr)
 	// 	SecureUrl: 3dcart merchant's Secure URL.
 	// PrivateKey: Your application's private key.
 	// Token: The 3dcart merchant's token.
 	//<iframe src="https://localhost:8070?cart=3dcar&carturl=[store_url]"></iframe>
 	//<iframe src="https://localhost:8070?cart=3dcar&carturl=[store_url]"></iframe>
 
-	secureURL := r.Header.Get("SecureUrl")
-	privateKey := r.Header.Get("PrivateKey")
-	token := r.Header.Get("Token")
+	// secureURL := r.Header.Get("SecureUrl")
+	// privateKey := r.Header.Get("PrivateKey")
+	// token := r.Header.Get("Token")
 	var p PageParams
 	p.Cart = cart
 	p.CartURL = carturl
-	p.URL = secureURL
-	p.Key = privateKey
-	p.Token = token
+	// p.URL = secureURL
+	// p.Key = privateKey
+	// p.Token = token
 	h.Templates.ExecuteTemplate(w, "index.html", &p)
 }

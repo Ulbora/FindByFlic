@@ -27,17 +27,32 @@ package main
 
 import (
 	hand "FindByFFL/handlers"
+	usession "github.com/Ulbora/go-better-sessions"
+	"github.com/gorilla/mux"
 	"html/template"
 	"log"
 	"net/http"
+	"os"
+)
 
-	"github.com/gorilla/mux"
+const (
+	userSession       = "ffl-user-session"
+	sessingTimeToLive = (15 * 60) //120 minutes -- 2 hours
 )
 
 var templates *template.Template
 var h hand.Handler
+var s usession.Session
 
 func main() {
+	s.MaxAge = sessingTimeToLive
+	s.Name = userSession
+	if os.Getenv("SESSION_SECRET_KEY") != "" {
+		s.SessionKey = os.Getenv("SESSION_SECRET_KEY")
+	} else {
+		s.SessionKey = "115722gggg14ddfg4567"
+	}
+	h.Sess = s
 	h.Templates = template.Must(template.ParseFiles("./static/index.html"))
 	router := mux.NewRouter()
 	router.HandleFunc("/", h.HandleIndex).Methods("GET")
