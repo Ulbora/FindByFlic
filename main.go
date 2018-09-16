@@ -26,7 +26,7 @@
 package main
 
 import (
-	hand "FindByFFL/handlers"
+	hand "FindByFlic/handlers"
 	usession "github.com/Ulbora/go-better-sessions"
 	"github.com/gorilla/mux"
 	"html/template"
