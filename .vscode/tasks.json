@@ -9,7 +9,8 @@
             "command": "go",
             "args": [
                 "get",
-                "github.com/gorilla/mux"
+                "github.com/gorilla/mux",
+                "github.com/Ulbora/dbinterface"
             ],
             "problemMatcher": [
                 "$go"
@@ -21,7 +22,8 @@
             "command": "go",
             "args": [
                 "install",
-                "github.com/gorilla/mux"
+                "github.com/gorilla/mux",
+                "github.com/Ulbora/dbinterface"
             ],
             "problemMatcher": [
                 "$go"
