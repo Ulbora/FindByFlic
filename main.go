@@ -53,9 +53,11 @@ func main() {
 		s.SessionKey = "115722gggg14ddfg4567"
 	}
 	h.Sess = s
-	h.Templates = template.Must(template.ParseFiles("./static/index.html"))
+	h.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html"))
+	//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
 	router := mux.NewRouter()
 	router.HandleFunc("/", h.HandleIndex).Methods("GET")
+	router.HandleFunc("/dcart", h.HandleDcartIndex).Methods("GET")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 

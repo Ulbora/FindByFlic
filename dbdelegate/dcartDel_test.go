@@ -1,4 +1,4 @@
-package dbdeligate
+package dbdelegate
 
 import (
 	"fmt"
