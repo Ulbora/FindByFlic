@@ -26,6 +26,8 @@
 package handlers
 
 import (
+	dcd "FindByFlic/dbdelegate"
+	"encoding/json"
 	"log"
 	"net/http"
 )
@@ -56,4 +58,24 @@ func (h *Handler) HandleDcartIndex(w http.ResponseWriter, r *http.Request) {
 	// p.Key = privateKey
 	// p.Token = token
 	h.Templates.ExecuteTemplate(w, "dcartIndex.html", &p)
+}
+
+//HandleDcartCb HandleDcartCb
+func (h *Handler) HandleDcartCb(w http.ResponseWriter, r *http.Request) {
+	cType := r.Header.Get("Content-Type")
+	if cType != "application/json" {
+		http.Error(w, "json required", http.StatusUnsupportedMediaType)
+	} else {
+		//var dcReg dcd.DCartUser
+
+		dcReg := new(dcd.DCartUser)
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&dcReg)
+		if err != nil {
+			log.Println(err.Error())
+			//http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		jsn, err := json.Marshal(dcReg)
+		log.Println("json: ", string(jsn))
+	}
 }
