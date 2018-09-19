@@ -67,7 +67,7 @@ func (h *Handler) HandleDcartCb(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "json required", http.StatusUnsupportedMediaType)
 	} else {
 		//var dcReg dcd.DCartUser
-
+		log.Println("body from dcart :", r.Body)
 		dcReg := new(dcd.DCartUser)
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&dcReg)
@@ -76,6 +76,6 @@ func (h *Handler) HandleDcartCb(w http.ResponseWriter, r *http.Request) {
 			//http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 		jsn, err := json.Marshal(dcReg)
-		log.Println("json: ", string(jsn))
+		log.Println("json from dcart :", string(jsn))
 	}
 }
