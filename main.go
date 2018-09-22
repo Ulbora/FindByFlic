@@ -26,7 +26,11 @@
 package main
 
 import (
+	dcd "FindByFlic/dbdelegate"
 	hand "FindByFlic/handlers"
+	"fmt"
+	dbi "github.com/Ulbora/dbinterface"
+	mydb "github.com/Ulbora/dbinterface/mysql"
 	usession "github.com/Ulbora/go-better-sessions"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -44,29 +48,72 @@ var templates *template.Template
 var h hand.Handler
 var s usession.Session
 
+var dcart dcd.FindFFLDCart
+var dcDel dcd.DCartDeligate
+var db dbi.Database
+var mdb mydb.MyDB
+
 func main() {
-	s.MaxAge = sessingTimeToLive
-	s.Name = userSession
-	if os.Getenv("SESSION_SECRET_KEY") != "" {
-		s.SessionKey = os.Getenv("SESSION_SECRET_KEY")
+
+	if os.Getenv("DATABASE_HOST") != "" {
+		mdb.Host = os.Getenv("DATABASE_HOST")
 	} else {
-		s.SessionKey = "115722gggg14ddfg4567"
+		mdb.Host = "localhost:3306"
 	}
-	h.Sess = s
-	h.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html"))
-	//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
-	router := mux.NewRouter()
-	router.HandleFunc("/", h.HandleIndex).Methods("GET")
-	router.HandleFunc("/dcart", h.HandleDcartIndex).Methods("GET")
 
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	if os.Getenv("DATABASE_USER_NAME") != "" {
+		mdb.User = os.Getenv("DATABASE_USER_NAME")
+	} else {
+		mdb.User = "admin"
+	}
 
-	//<iframe src="https://localhost:8060"></iframe>
+	if os.Getenv("DATABASE_USER_PASSWORD") != "" {
+		mdb.Password = os.Getenv("DATABASE_USER_PASSWORD")
+	} else {
+		mdb.Password = "admin"
+	}
 
-	log.Println("Online Account Creator!")
-	log.Println("Listening on :8070...")
-	//http.ListenAndServe(":8070", router)
-	//http.ListenAndServeTLS(":8070", "certLocal.pem", "keyLocal.pem", router)
-	http.ListenAndServeTLS(":8070", "cert.pem", "key.pem", router)
+	if os.Getenv("DATABASE_NAME") != "" {
+		mdb.Database = os.Getenv("DATABASE_NAME")
+	} else {
+		mdb.Database = "dcart_flic"
+	}
+	db = &mdb
+	dcDel.DB = db
+	dcart = &dcDel
+	suc := dcDel.DB.Connect()
+	if suc {
+		defer dcDel.DB.Close()
+		h.FindFFLDCart = dcart
+		fmt.Println("del db: ", h.FindFFLDCart)
+
+		s.MaxAge = sessingTimeToLive
+		s.Name = userSession
+		if os.Getenv("SESSION_SECRET_KEY") != "" {
+			s.SessionKey = os.Getenv("SESSION_SECRET_KEY")
+		} else {
+			s.SessionKey = "115722gggg14ddfg4567"
+		}
+		h.Sess = s
+		h.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html",
+			"./static/dcartConfig.html"))
+		//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
+		router := mux.NewRouter()
+		router.HandleFunc("/", h.HandleIndex).Methods("GET")
+		router.HandleFunc("/dcart", h.HandleDcartIndex).Methods("GET")
+		router.HandleFunc("/dcartconfig", h.HandleDcartConfig).Methods("GET")
+		router.HandleFunc("/dcartcb", h.HandleDcartCb).Methods("POST")
+
+		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+
+		//<iframe src="https://localhost:8060"></iframe>
+
+		log.Println("Online Account Creator!")
+		log.Println("Listening on :8070...")
+		http.ListenAndServe(":8070", router)
+		//http.ListenAndServeTLS(":8070", "certLocal.pem", "keyLocal.pem", router)
+		//http.ListenAndServeTLS(":8070", "cert.pem", "key.pem", router)
+
+	}
 
 }

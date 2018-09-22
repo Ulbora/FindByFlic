@@ -34,11 +34,11 @@ import (
 
 //DCartUser DCartUser
 type DCartUser struct {
-	PublicKey string    `json:"PublicKey"`
-	TimeStamp time.Time `json:"TimeStamp"`
-	TokenKey  string    `json:"TokenKey"`
-	Action    string    `json:"Action"`
-	SecureURL string    `json:"SecureURL"`
+	PublicKey string `json:"PublicKey"`
+	TimeStamp string `json:"TimeStamp"`
+	TokenKey  string `json:"TokenKey"`
+	Action    string `json:"Action"`
+	SecureURL string `json:"SecureURL"`
 	Enabled   bool
 }
 

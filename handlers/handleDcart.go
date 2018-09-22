@@ -28,6 +28,7 @@ package handlers
 import (
 	dcd "FindByFlic/dbdelegate"
 	"encoding/json"
+	//dbi "github.com/Ulbora/dbinterface"
 	"log"
 	"net/http"
 )
@@ -41,7 +42,10 @@ func (h *Handler) HandleDcartIndex(w http.ResponseWriter, r *http.Request) {
 	session.Values["cart"] = cart
 	session.Values["carturl"] = carturl
 	serr := session.Save(r, w)
-	log.Println(serr)
+	if serr != nil {
+		log.Println("Session Err:", serr)
+	}
+
 	// 	SecureUrl: 3dcart merchant's Secure URL.
 	// PrivateKey: Your application's private key.
 	// Token: The 3dcart merchant's token.
@@ -60,22 +64,64 @@ func (h *Handler) HandleDcartIndex(w http.ResponseWriter, r *http.Request) {
 	h.Templates.ExecuteTemplate(w, "dcartIndex.html", &p)
 }
 
+//HandleDcartConfig HandleDcartConfig
+func (h *Handler) HandleDcartConfig(w http.ResponseWriter, r *http.Request) {
+	h.Sess.InitSessionStore(w, r)
+	// var cart = r.URL.Query().Get("cart")
+	// var carturl = r.URL.Query().Get("carturl")
+	// session := h.getSession(w, r)
+	// session.Values["cart"] = cart
+	// session.Values["carturl"] = carturl
+	// serr := session.Save(r, w)
+	// log.Println(serr)
+	// 	SecureUrl: 3dcart merchant's Secure URL.
+	// PrivateKey: Your application's private key.
+	// Token: The 3dcart merchant's token.
+	//<iframe src="https://localhost:8070?cart=3dcar&carturl=[store_url]"></iframe>
+	//<iframe src="https://localhost:8070?cart=3dcar&carturl=[store_url]"></iframe>
+
+	// secureURL := r.Header.Get("SecureUrl")
+	// privateKey := r.Header.Get("PrivateKey")
+	// token := r.Header.Get("Token")
+	// var p PageParams
+	// p.Cart = cart
+	// p.CartURL = carturl
+	// p.URL = secureURL
+	// p.Key = privateKey
+	// p.Token = token
+	h.Templates.ExecuteTemplate(w, "dcartConfig.html", nil)
+}
+
 //HandleDcartCb HandleDcartCb
 func (h *Handler) HandleDcartCb(w http.ResponseWriter, r *http.Request) {
+	var rtn bool
 	cType := r.Header.Get("Content-Type")
 	if cType != "application/json" {
 		http.Error(w, "json required", http.StatusUnsupportedMediaType)
 	} else {
 		//var dcReg dcd.DCartUser
-		log.Println("body from dcart :", r.Body)
+		//log.Println("body from dcart :", r.Body)
 		dcReg := new(dcd.DCartUser)
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&dcReg)
 		if err != nil {
-			log.Println(err.Error())
+			log.Println("Decode error: ", err.Error())
 			//http.Error(w, err.Error(), http.StatusBadRequest)
 		}
+
+		if dcReg.Action == "AUTHORIZE" {
+			rtn, _ = h.FindFFLDCart.AddUser(dcReg)
+		} else if dcReg.Action == "REMOVE" {
+			rtn = h.FindFFLDCart.RemoveUser(dcReg)
+		}
+
 		jsn, err := json.Marshal(dcReg)
 		log.Println("json from dcart :", string(jsn))
+		if rtn {
+			w.WriteHeader(http.StatusOK)
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+
 	}
 }

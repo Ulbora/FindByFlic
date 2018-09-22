@@ -3,7 +3,7 @@ package dbdelegate
 import (
 	"fmt"
 	"testing"
-	"time"
+	//"time"
 
 	dbi "github.com/Ulbora/dbinterface"
 	mydb "github.com/Ulbora/dbinterface/mysql"
@@ -43,7 +43,7 @@ func TestDCartDeligate_AddUser(t *testing.T) {
 	dcu.PublicKey = "12345"
 	dcu.SecureURL = "https://teststore.cdcart.com"
 	dcu.TokenKey = "555ggg11"
-	dcu.TimeStamp = time.Now()
+	dcu.TimeStamp = "12-25-2018 01:01:00" // time.Now()
 	suc, id := dcart.AddUser(&dcu)
 	if !suc || id < 1 {
 		t.Fail()
@@ -58,7 +58,7 @@ func TestDCartDeligate_RemoveUser(t *testing.T) {
 	//dcu.PublicKey = "12345"
 	dcu.SecureURL = "https://teststore.cdcart.com"
 	//dcu.TokenKey = "555ggg11"
-	dcu.TimeStamp = time.Now()
+	dcu.TimeStamp = "12-25-2018 01:01:00" //time.Now()
 	suc := dcart.RemoveUser(&dcu)
 	if !suc {
 		t.Fail()
@@ -71,7 +71,7 @@ func TestDCartDeligate_AddUser2(t *testing.T) {
 	dcu.PublicKey = "12345"
 	dcu.SecureURL = "https://teststore.cdcart.com"
 	dcu.TokenKey = "555ggg11"
-	dcu.TimeStamp = time.Now()
+	dcu.TimeStamp = "12-25-2018 01:01:00" //time.Now()
 	suc, id := dcart.AddUser(&dcu)
 	if !suc || id < 1 {
 		t.Fail()
@@ -91,6 +91,14 @@ func TestDCartDeligate_delete(t *testing.T) {
 	a = append(a, insrtId1)
 	suc := dcDel.DB.Delete("delete from dcart_user where id = ?", a...)
 
+	if !suc {
+		t.Fail()
+	}
+}
+
+func TestDCartDeligate_close(t *testing.T) {
+	suc := dcDel.DB.Close()
+	fmt.Println("closing db")
 	if !suc {
 		t.Fail()
 	}

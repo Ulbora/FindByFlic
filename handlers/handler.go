@@ -26,6 +26,7 @@
 package handlers
 
 import (
+	del "FindByFlic/dbdelegate"
 	usession "github.com/Ulbora/go-better-sessions"
 	"github.com/gorilla/sessions"
 	"html/template"
@@ -35,8 +36,9 @@ import (
 
 //Handler Handler
 type Handler struct {
-	Templates *template.Template
-	Sess      usession.Session
+	Templates    *template.Template
+	FindFFLDCart del.FindFFLDCart
+	Sess         usession.Session
 }
 
 //PageParams PageParams
@@ -51,7 +53,7 @@ type PageParams struct {
 func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	session, err := h.Sess.GetSession(r)
 	if err != nil {
-		log.Println(err)
+		log.Println("get session error: ", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	return session
@@ -66,7 +68,10 @@ func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	session.Values["cart"] = cart
 	session.Values["carturl"] = carturl
 	serr := session.Save(r, w)
-	log.Println(serr)
+	if serr != nil {
+		log.Println(serr)
+	}
+
 	// 	SecureUrl: 3dcart merchant's Secure URL.
 	// PrivateKey: Your application's private key.
 	// Token: The 3dcart merchant's token.
