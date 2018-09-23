@@ -28,6 +28,7 @@ package handlers
 import (
 	dcd "FindByFlic/dbdelegate"
 	"encoding/json"
+	"io/ioutil"
 	//dbi "github.com/Ulbora/dbinterface"
 	"log"
 	"net/http"
@@ -95,6 +96,14 @@ func (h *Handler) HandleDcartConfig(w http.ResponseWriter, r *http.Request) {
 //HandleDcartCb HandleDcartCb
 func (h *Handler) HandleDcartCb(w http.ResponseWriter, r *http.Request) {
 	var rtn bool
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println("body err: ", err)
+	} else {
+		log.Println("json from dcart at start:", string(b))
+	}
+
+	log.Println("service call from 3dcart on callback-------")
 	cType := r.Header.Get("Content-Type")
 	if cType != "application/json" {
 		http.Error(w, "json required", http.StatusUnsupportedMediaType)
@@ -102,12 +111,13 @@ func (h *Handler) HandleDcartCb(w http.ResponseWriter, r *http.Request) {
 		//var dcReg dcd.DCartUser
 		//log.Println("body from dcart :", r.Body)
 		dcReg := new(dcd.DCartUser)
-		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&dcReg)
-		if err != nil {
-			log.Println("Decode error: ", err.Error())
-			//http.Error(w, err.Error(), http.StatusBadRequest)
-		}
+		json.Unmarshal(b, dcReg)
+		// decoder := json.NewDecoder(r.Body)
+		// err := decoder.Decode(&dcReg)
+		// if err != nil {
+		// 	log.Println("Decode error: ", err.Error())
+		// 	//http.Error(w, err.Error(), http.StatusBadRequest)
+		// }
 
 		if dcReg.Action == "AUTHORIZE" {
 			rtn, _ = h.FindFFLDCart.AddUser(dcReg)
@@ -116,7 +126,10 @@ func (h *Handler) HandleDcartCb(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsn, err := json.Marshal(dcReg)
-		log.Println("json from dcart :", string(jsn))
+		if err != nil {
+			log.Println("marshal err: ", err)
+		}
+		log.Println("json from dcart at end:", string(jsn))
 		if rtn {
 			w.WriteHeader(http.StatusOK)
 		} else {
