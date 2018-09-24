@@ -96,7 +96,7 @@ func main() {
 		}
 		h.Sess = s
 		h.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html",
-			"./static/dcartConfig.html"))
+			"./static/dcartConfig.html", "./static/head.html"))
 		//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
 		router := mux.NewRouter()
 		router.HandleFunc("/", h.HandleIndex).Methods("GET")

@@ -1,3 +1,31 @@
+body {
+  color: darkblue;
+}
+@media (min-width: 1024px) {
+  body {
+    font-size: 12pt;
+  }
+}
+@media (max-width: 1024px) {
+  body {
+    font-size: 12pt;
+  }
+}
+@media (max-height: 700px) {
+  body {
+    font-size: 12pt;
+  }
+}
+@media (max-width: 768px) {
+  body {
+    font-size: 10pt;
+  }
+}
+@media (max-width: 480px) {
+  body {
+    font-size: 10pt;
+  }
+}
 .index {
   width: 100%;
   padding: 5% 0 1% 0;
@@ -9,4 +37,12 @@
   padding: 0 0 5% 0;
   text-align: center;
   color: darkblue;
+}
+.zip {
+  width: 100%;
+  padding: 1% 0 0 0;
+  text-align: center;
+}
+.zip-title {
+  color: red;
 }
