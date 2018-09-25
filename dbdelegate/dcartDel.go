@@ -26,9 +26,11 @@
 package dbdelegate
 
 import (
+	"fmt"
 	dbi "github.com/Ulbora/dbinterface"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -62,6 +64,8 @@ func (d *DCartDeligate) AddUser(cu *DCartUser) (bool, int64) {
 		if !d.testConnection() {
 			d.DB.Connect()
 		}
+		cu.SecureURL = cleanURL(cu.SecureURL)
+		//fmt.Println("cu.SecureURL", cu.SecureURL)
 		var a []interface{}
 		a = append(a, cu.SecureURL)
 		rowPtr := d.DB.Get(dcartGetByStore, a...)
@@ -98,6 +102,7 @@ func (d *DCartDeligate) RemoveUser(cu *DCartUser) bool {
 		if !d.testConnection() {
 			d.DB.Connect()
 		}
+		cu.SecureURL = cleanURL(cu.SecureURL)
 		var a []interface{}
 		a = append(a, cu.SecureURL)
 		rowPtr := d.DB.Get(dcartGetByStore, a...)
@@ -125,6 +130,7 @@ func (d *DCartDeligate) GetUser(url string) *DCartUser {
 		d.DB.Connect()
 	}
 	var rtn DCartUser
+	url = cleanURL(url)
 	var a []interface{}
 	a = append(a, url)
 	rowPtr := d.DB.Get(dcartGetByStore, a...)
@@ -168,5 +174,16 @@ func (d *DCartDeligate) testConnection() bool {
 			rtn = true
 		}
 	}
+	return rtn
+}
+
+func cleanURL(url string) string {
+	var rtn string
+	if strings.Contains(url, "https:") {
+		rtn = strings.TrimPrefix(url, "https://")
+	} else {
+		rtn = strings.TrimPrefix(url, "http://")
+	}
+	fmt.Println("url:", rtn)
 	return rtn
 }

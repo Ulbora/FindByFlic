@@ -10,9 +10,16 @@ and open the template in the editor.
 <body>
     <div class="ui container">
         <div class="zip">
-            <h3 class="zip-title">Firearms Must be Shipped to an FFL</h3>
+            <div class="zip-title">Firearms Must be Shipped to an FFL</div>
             <div>Find an FFL in Your Area</div>
         </div>
+        <form class="ui form">
+            <div class="field">
+                <label>Zip Code</label>
+                <input type="number" name="zip" placeholder="30166">
+            </div>
+            <button class="ui button" type="submit">Submit</button>
+        </form>
     </div>
 </body>
 

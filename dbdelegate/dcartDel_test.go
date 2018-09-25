@@ -3,7 +3,6 @@ package dbdelegate
 import (
 	"fmt"
 	"testing"
-	//"time"
 
 	dbi "github.com/Ulbora/dbinterface"
 	mydb "github.com/Ulbora/dbinterface/mysql"
@@ -100,6 +99,13 @@ func TestDCartDeligate_close(t *testing.T) {
 	suc := dcDel.DB.Close()
 	fmt.Println("closing db")
 	if !suc {
+		t.Fail()
+	}
+}
+
+func Test_clearURL(t *testing.T) {
+	s := cleanURL("https://teststore.cdcart.com")
+	if s != "teststore.cdcart.com" {
 		t.Fail()
 	}
 }
