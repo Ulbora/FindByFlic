@@ -93,3 +93,41 @@ body {
     font-size: 10pt;
   }
 }
+.fixed {
+  position: fixed;
+  /* Set the navbar to fixed position */
+  top: 0;
+  width: 100%;
+}
+.zip-label {
+  font-weight: bold;
+}
+@media (min-width: 1024px) {
+  .zip-label {
+    font-size: 12pt;
+  }
+}
+@media (max-width: 1024px) {
+  .zip-label {
+    font-size: 12pt;
+  }
+}
+@media (max-height: 700px) {
+  .zip-label {
+    font-size: 12pt;
+  }
+}
+@media (max-width: 768px) {
+  .zip-label {
+    font-size: 12pt;
+  }
+}
+@media (max-width: 480px) {
+  .zip-label {
+    font-size: 10pt;
+  }
+}
+.zip-input {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+}
