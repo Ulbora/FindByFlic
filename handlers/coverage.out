@@ -1,4 +1,10 @@
 mode: set
+FindByFlic/handlers/handler.go:60.88,62.16 2 1
+FindByFlic/handlers/handler.go:66.2,66.16 1 1
+FindByFlic/handlers/handler.go:62.16,65.3 2 1
+FindByFlic/handlers/handler.go:70.71,78.17 8 1
+FindByFlic/handlers/handler.go:91.2,97.50 4 1
+FindByFlic/handlers/handler.go:78.17,80.3 1 1
 FindByFlic/handlers/handleDcart.go:38.76,46.17 8 1
 FindByFlic/handlers/handleDcart.go:59.2,65.55 4 1
 FindByFlic/handlers/handleDcart.go:46.17,48.3 1 1
@@ -17,9 +23,4 @@ FindByFlic/handlers/handleDcart.go:124.38,126.4 1 1
 FindByFlic/handlers/handleDcart.go:129.17,131.4 1 0
 FindByFlic/handlers/handleDcart.go:133.10,135.4 1 1
 FindByFlic/handlers/handleDcart.go:135.9,137.4 1 0
-FindByFlic/handlers/handler.go:53.88,55.16 2 1
-FindByFlic/handlers/handler.go:59.2,59.16 1 1
-FindByFlic/handlers/handler.go:55.16,58.3 2 1
-FindByFlic/handlers/handler.go:63.71,71.17 8 1
-FindByFlic/handlers/handler.go:84.2,90.50 4 1
-FindByFlic/handlers/handler.go:71.17,73.3 1 1
+FindByFlic/handlers/handleDcart.go:142.78,148.2 5 1

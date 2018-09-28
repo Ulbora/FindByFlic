@@ -27,6 +27,7 @@ package handlers
 
 import (
 	del "FindByFlic/dbdelegate"
+	ffl "FindByFlic/fflfinder"
 	usession "github.com/Ulbora/go-better-sessions"
 	"github.com/gorilla/sessions"
 	"html/template"
@@ -39,15 +40,21 @@ type Handler struct {
 	Templates    *template.Template
 	FindFFLDCart del.FindFFLDCart
 	Sess         usession.Session
+	FFLFinder    ffl.FFLFinder
 }
 
 //PageParams PageParams
 type PageParams struct {
-	Cart    string
+	Order   string
 	CartURL string
 	URL     string
 	Key     string
 	Token   string
+}
+
+//FFLPageParams FFLPageParams
+type FFLPageParams struct {
+	FFLList *[]ffl.FFL
 }
 
 func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
@@ -62,10 +69,10 @@ func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) *sessions.S
 //HandleIndex HandleIndex
 func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	h.Sess.InitSessionStore(w, r)
-	var cart = r.URL.Query().Get("cart")
+	var order = r.URL.Query().Get("order")
 	var carturl = r.URL.Query().Get("carturl")
 	session := h.getSession(w, r)
-	session.Values["cart"] = cart
+	session.Values["order"] = order
 	session.Values["carturl"] = carturl
 	serr := session.Save(r, w)
 	if serr != nil {
@@ -82,7 +89,7 @@ func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	// privateKey := r.Header.Get("PrivateKey")
 	// token := r.Header.Get("Token")
 	var p PageParams
-	p.Cart = cart
+	p.Order = order
 	p.CartURL = carturl
 	// p.URL = secureURL
 	// p.Key = privateKey

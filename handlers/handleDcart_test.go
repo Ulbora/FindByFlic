@@ -27,16 +27,19 @@ package handlers
 
 import (
 	dcd "FindByFlic/dbdelegate"
+	ffl "FindByFlic/fflfinder"
 	"bytes"
 	"encoding/json"
 	"fmt"
-	dbi "github.com/Ulbora/dbinterface"
-	mydb "github.com/Ulbora/dbinterface/mysql"
 	"html/template"
+	// "io/ioutil"
+
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	dbi "github.com/Ulbora/dbinterface"
+	mydb "github.com/Ulbora/dbinterface/mysql"
 	usession "github.com/Ulbora/go-better-sessions"
 )
 
@@ -149,6 +152,21 @@ func TestHandler_close(t *testing.T) {
 	suc := dcDel.DB.Close()
 	fmt.Println("closing db")
 	if !suc {
+		t.Fail()
+	}
+}
+
+func TestHandler_HandleDcartFindFFL(t *testing.T) {
+	var h Handler
+	h.Templates = template.Must(template.ParseFiles("dcartAddFfl.html"))
+	h.FFLFinder = new(ffl.MockFinder)
+
+	r, _ := http.NewRequest("GET", "/challenge?zip=12345", nil)
+	w := httptest.NewRecorder()
+	h.HandleDcartFindFFL(w, r)
+	// body, _ := ioutil.ReadAll(w.Result().Body)
+	// fmt.Println("ffl list Res body", string(body))
+	if w.Code != 200 {
 		t.Fail()
 	}
 }
