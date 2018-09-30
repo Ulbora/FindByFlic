@@ -43,12 +43,39 @@ body {
   padding: 1% 0 0 0;
   text-align: center;
 }
+@media (min-width: 1024px) {
+  .zip {
+    margin: 5% 0 0 0;
+  }
+}
+@media (max-width: 1024px) {
+  .zip {
+    margin: 5% 0 0 0;
+  }
+}
+@media (max-height: 700px) {
+  .zip {
+    margin: 6% 0 0 0;
+  }
+}
+@media (max-width: 768px) {
+  .zip {
+    margin: 8% 0 0 0;
+  }
+}
+@media (max-width: 480px) {
+  .zip {
+    margin: 12% 0 0 0;
+  }
+}
 .zip-wrapper {
   width: 100%;
   text-align: center;
   float: left;
   padding: .5% 0 0 0;
   margin: 0 0 1% 0;
+  background: black;
+  color: white;
 }
 .zip-field {
   width: 10%;
@@ -130,4 +157,17 @@ body {
 .zip-input {
   border: 2px solid #ccc;
   border-radius: 4px;
+}
+.ffl-list {
+  padding: 0 10% 0 0;
+}
+.ffl-send {
+  text-align: left;
+}
+.button-wrapper {
+  width: 100%;
+  float: left;
+}
+.ffl-button {
+  float: left;
 }

@@ -33,3 +33,8 @@ type Finder struct {
 func (f *Finder) FindFFL(zip string) *[]FFL {
 	return nil
 }
+
+//GetFFL GetFFL
+func (f *Finder) GetFFL(licNum string) *FFL {
+	return nil
+}

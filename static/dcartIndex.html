@@ -1,23 +1,20 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
+
 <html>
 {{template "head"}}
 
 <body>
     <div class="fixed">
+        <form method="post" action="/dcartFindffl">
+            <div class=zip-wrapper>
+                <label class="zip-label">Zip</label> <input name="zip" class="zip-input" type="text" placeholder="zip code">
+                <button class="mini circular ui icon button" type="submit">
+                    <i class="search icon"></i>
+                </button>
+            </div>
+        </form>
         <div class="ui container">
-            <form method="post" action="/dcartFindffl">
-                <div class=zip-wrapper>
-                    <label class="zip-label">Zip</label> <input class="zip-input" type="text" placeholder="zip code">
-                    <button class="mini circular ui icon button" type="submit">
-                        <i class="search icon"></i>
-                    </button>
-                </div>
-            </form>
+
             <div class="zip">
                 <div class="zip-title">Firearms Must be Shipped to an FFL</div>
                 <div>Find an FFL in Your Area</div>

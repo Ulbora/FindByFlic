@@ -1,3 +1,5 @@
 mode: set
-FindByFlic/fflfinder/fflFinder.go:8.45,10.2 1 0
-FindByFlic/fflfinder/mockFinder.go:8.49,46.2 32 1
+FindByFlic/fflfinder/fflFinder.go:33.45,35.2 1 0
+FindByFlic/fflfinder/fflFinder.go:38.45,40.2 1 0
+FindByFlic/fflfinder/mockFinder.go:33.49,71.2 32 1
+FindByFlic/fflfinder/mockFinder.go:74.49,80.2 5 1

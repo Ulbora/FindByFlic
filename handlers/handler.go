@@ -55,6 +55,10 @@ type PageParams struct {
 //FFLPageParams FFLPageParams
 type FFLPageParams struct {
 	FFLList *[]ffl.FFL
+	FFL     *ffl.FFL
+	Zip     string
+	Name    string
+	Address string
 }
 
 func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {

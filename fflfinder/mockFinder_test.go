@@ -14,3 +14,12 @@ func TestMockFinder_FindFFL(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestMockFinder_GetFFL(t *testing.T) {
+	var f MockFinder
+	fnd = &f
+	fl := fnd.GetFFL("4566687")
+	if fl == nil {
+		t.Fail()
+	}
+}

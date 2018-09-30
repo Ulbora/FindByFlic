@@ -28,6 +28,7 @@ package fflfinder
 //FFLFinder FFLFinder
 type FFLFinder interface {
 	FindFFL(zip string) *[]FFL
+	GetFFL(licNum string) *FFL
 }
 
 //FFL FFL

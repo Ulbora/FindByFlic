@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+{{template "head"}}
+
+<body>
+    <div class="fixed">
+        <form method="post" action="/dcartFindffl">
+            <div class=zip-wrapper>
+                <label class="zip-label">Zip</label> <input name="zip" class="zip-input" type="text" placeholder="zip code">
+                <button class="mini circular ui icon button" type="submit">
+                    <i class="search icon"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="ui container">
+        <div class="ffl-list">
+            <div class="zip">
+                <div class="zip-title">Firearms Must be Shipped to an FFL</div>
+                <div>FFL list for zip code <b>{{.Zip}}</b></div>
+            </div>
+
+            <table class="ui unstackable selectable celled table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .FFLList}}
+                    <tr onclick="window.location.href='/dcartChooseFFL?id={{.LicNumber}}&zip={{$.Zip}}'">
+                        <td>{{.Name}}</td>
+                        <td>{{.Address}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

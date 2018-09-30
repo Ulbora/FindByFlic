@@ -27,6 +27,7 @@ package main
 
 import (
 	dcd "FindByFlic/dbdelegate"
+	ffl "FindByFlic/fflfinder"
 	hand "FindByFlic/handlers"
 	"fmt"
 	dbi "github.com/Ulbora/dbinterface"
@@ -95,14 +96,18 @@ func main() {
 			s.SessionKey = "115722gggg14ddfg4567"
 		}
 		h.Sess = s
+		h.FFLFinder = new(ffl.MockFinder)
 		h.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html",
-			"./static/dcartConfig.html", "./static/head.html"))
+			"./static/dcartConfig.html", "./static/head.html", "./static/dcartAddFfl.html",
+			"./static/dcartChosenFfl.html"))
 		//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
 		router := mux.NewRouter()
 		router.HandleFunc("/", h.HandleIndex).Methods("GET")
 		router.HandleFunc("/dcart", h.HandleDcartIndex).Methods("GET")
 		router.HandleFunc("/dcartconfig", h.HandleDcartConfig).Methods("GET")
 		router.HandleFunc("/dcartcb", h.HandleDcartCb).Methods("POST")
+		router.HandleFunc("/dcartFindffl", h.HandleDcartFindFFL).Methods("POST")
+		router.HandleFunc("/dcartChooseFFL", h.HandleDcartChooseFFL).Methods("GET")
 
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
@@ -110,8 +115,8 @@ func main() {
 
 		log.Println("Online Account Creator!")
 		log.Println("Listening on :8070...")
-		http.ListenAndServe(":8070", router)
-		//http.ListenAndServeTLS(":8070", "certLocal.pem", "keyLocal.pem", router)
+		//http.ListenAndServe(":8070", router)
+		http.ListenAndServeTLS(":8070", "certLocal.pem", "keyLocal.pem", router)
 		//http.ListenAndServeTLS(":8070", "cert.pem", "key.pem", router)
 
 	}

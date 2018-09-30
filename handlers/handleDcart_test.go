@@ -32,8 +32,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	// "io/ioutil"
-
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -72,7 +70,7 @@ func TestHandler_HandleDcartIndex(t *testing.T) {
 	w := httptest.NewRecorder()
 	h.Sess.InitSessionStore(w, r)
 	session, _ := h.Sess.GetSession(r)
-	session.Values["accessTokenKey"] = "123456"
+	session.Save(r, w)
 	//var resp oauth2.Token
 	//resp.AccessToken = "bbbnn"
 	//h.TokenMap["123456"] = &resp
@@ -164,6 +162,50 @@ func TestHandler_HandleDcartFindFFL(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/challenge?zip=12345", nil)
 	w := httptest.NewRecorder()
 	h.HandleDcartFindFFL(w, r)
+	// body, _ := ioutil.ReadAll(w.Result().Body)
+	// fmt.Println("ffl list Res body", string(body))
+	if w.Code != 200 {
+		t.Fail()
+	}
+}
+
+func TestHandler_HandleDcartChooseFFL(t *testing.T) {
+	var h Handler
+	h.Templates = template.Must(template.ParseFiles("dcartChosenFfl.html"))
+	h.FFLFinder = new(ffl.MockFinder)
+
+	r, _ := http.NewRequest("GET", "/challenge?zip=12345", nil)
+	w := httptest.NewRecorder()
+	h.HandleDcartChooseFFL(w, r)
+	// body, _ := ioutil.ReadAll(w.Result().Body)
+	// fmt.Println("ffl list Res body", string(body))
+	if w.Code != 200 {
+		t.Fail()
+	}
+}
+
+// type TestShip struct{
+// 	ID string
+// 	Name string
+// 	Address string
+// }
+func TestHandler_HandleDcartShipFFL(t *testing.T) {
+
+	var h Handler
+	h.Templates = template.Must(template.ParseFiles("dcartShippedFfl.html"))
+	h.FFLFinder = new(ffl.MockFinder)
+	var s usession.Session
+	h.Sess = s
+
+	r, _ := http.NewRequest("POST", "/challenge?id=12345&name=bobs guns&address=125 marietta, ga 12345", nil)
+	w := httptest.NewRecorder()
+
+	h.Sess.InitSessionStore(w, r)
+	session, _ := h.Sess.GetSession(r)
+	session.Values["order"] = "AB1026"
+	session.Values["carturl"] = "https://testcart.3dcart.com"
+	session.Save(r, w)
+	h.HandleDcartShipFFL(w, r)
 	// body, _ := ioutil.ReadAll(w.Result().Body)
 	// fmt.Println("ffl list Res body", string(body))
 	if w.Code != 200 {
