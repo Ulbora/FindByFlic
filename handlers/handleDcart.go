@@ -30,39 +30,32 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	//dbi "github.com/Ulbora/dbinterface"
+	//ffl "FindByFlic/fflfinder"
 	"log"
 	"net/http"
 )
 
 //HandleDcartIndex HandleDcartIndex
 func (h *Handler) HandleDcartIndex(w http.ResponseWriter, r *http.Request) {
-	h.Sess.InitSessionStore(w, r)
-	var order = r.URL.Query().Get("order")
-	var carturl = r.URL.Query().Get("carturl")
-	session := h.getSession(w, r)
-	session.Values["order"] = order
-	session.Values["carturl"] = carturl
-	serr := session.Save(r, w)
-	if serr != nil {
-		log.Println("Session Err:", serr)
-	}
+	// h.Sess.InitSessionStore(w, r)
+	// var order = r.URL.Query().Get("order")
+	// var carturl = r.URL.Query().Get("carturl")
+	// session := h.getSession(w, r)
+	// session.Values["order"] = order
+	// session.Values["carturl"] = carturl
+	// serr := session.Save(r, w)
+	// if serr != nil {
+	// 	log.Println("Session Err:", serr)
+	// }
 
-	// 	SecureUrl: 3dcart merchant's Secure URL.
-	// PrivateKey: Your application's private key.
-	// Token: The 3dcart merchant's token.
-	//<iframe src="https://localhost:8070?cart=3dcar&carturl=[store_url]"></iframe>
-	//<iframe src="https://localhost:8070?cart=3dcar&carturl=[store_url]"></iframe>
-
-	// secureURL := r.Header.Get("SecureUrl")
-	// privateKey := r.Header.Get("PrivateKey")
-	// token := r.Header.Get("Token")
-	var p PageParams
-	p.Order = order
-	p.CartURL = carturl
-	// p.URL = secureURL
-	// p.Key = privateKey
-	// p.Token = token
-	h.Templates.ExecuteTemplate(w, "dcartIndex.html", &p)
+	// var p PageParams
+	// p.Order = order
+	// p.CartURL = carturl
+	// // p.URL = secureURL
+	// // p.Key = privateKey
+	// // p.Token = token
+	// h.Templates.ExecuteTemplate(w, "dcartIndex.html", &p)
+	h.Templates.ExecuteTemplate(w, "dcartIndex.html", nil)
 }
 
 //HandleDcartConfig HandleDcartConfig
@@ -123,7 +116,7 @@ func (h *Handler) HandleDcartFindFFL(w http.ResponseWriter, r *http.Request) {
 	var pg FFLPageParams
 	pg.FFLList = res
 	pg.Zip = zip
-	log.Println("ffl list: ", pg.FFLList)
+	//log.Println("ffl list: ", pg.FFLList)
 	h.Templates.ExecuteTemplate(w, "dcartAddFfl.html", &pg)
 }
 
@@ -135,26 +128,76 @@ func (h *Handler) HandleDcartChooseFFL(w http.ResponseWriter, r *http.Request) {
 	var pg FFLPageParams
 	pg.FFL = res
 	pg.Zip = zip
-	log.Println("ffl: ", pg.FFL)
+	//log.Println("ffl: ", pg.FFL)
 	h.Templates.ExecuteTemplate(w, "dcartChosenFfl.html", &pg)
 }
 
 //HandleDcartShipFFL HandleDcartShipFFL
 func (h *Handler) HandleDcartShipFFL(w http.ResponseWriter, r *http.Request) {
+	h.Sess.InitSessionStore(w, r)
 	session := h.getSession(w, r)
 	licNum := r.FormValue("id")
-	log.Println("licNum in ship: ", licNum)
-	name := r.FormValue("name")
-	log.Println("name in ship: ", name)
-	address := r.FormValue("address")
-	log.Println("address in ship: ", address)
-	log.Println("order: ", session.Values["order"])
-	log.Println("carturl: ", session.Values["carturl"])
-	//res := h.FFLFinder.GetFFL(licNum)
+	//log.Println("licNum in ship: ", licNum)
+	//name := r.FormValue("name")
+	//log.Println("name in ship: ", name)
+	//address := r.FormValue("address")
+	// log.Println("address in ship: ", address)
+	// log.Println("order: ", session.Values["order"])
+	// log.Println("carturl: ", session.Values["carturl"])
+	res := h.FFLFinder.GetFFL(licNum)
+	//var theFFL interface{}
+	//theFFL = *res
+	session.Values["fflLic"] = licNum
+	//session.Values["fflName"] = name
+	//session.Values["fflAddress"] = address
+	serr := session.Save(r, w)
+	if serr != nil {
+		log.Println("Session Err:", serr)
+	}
 	var pg FFLPageParams
-	//pg.FFL = res
-	pg.Name = name
-	pg.Address = address
+	pg.FFL = res
+	//pg.Name = name
+	//pg.Address = address
+	//log.Println("shipTo: ", session.Values["fflLic"])
 	//log.Println("ffl: ", pg.FFL)
 	h.Templates.ExecuteTemplate(w, "dcartShippedFfl.html", &pg)
+}
+
+//HandleDcartShipFFLAddress HandleDcartShipFFLAddress
+func (h *Handler) HandleDcartShipFFLAddress(w http.ResponseWriter, r *http.Request) {
+	//h.Sess.InitSessionStore(w, r)
+	session := h.getSession(w, r)
+	//licNum := r.FormValue("id")
+	//log.Println("licNum in ship: ", licNum)
+	//name := r.FormValue("name")
+	//log.Println("name in ship: ", name)
+	//address := r.FormValue("address")
+	//log.Println("address in ship: ", address)
+	var order = r.URL.Query().Get("order")
+	var carturl = r.URL.Query().Get("carturl")
+	log.Println("order in ffl address: ", order)
+	log.Println("carturl in ffl address: ", carturl)
+	//log.Println("shipTo: ", session.Values["shipTo"])
+	var pg FFLPageParams
+	fflLic := session.Values["fflLic"]
+	var licNum string
+	if fflLic != nil {
+		licNum = fflLic.(string)
+		log.Println("ffl lic in address: ", licNum)
+		res := h.FFLFinder.GetFFL(licNum)
+		pg.FFL = res
+		//log.Println("shipTo in ffl in address: ", res)
+	}
+
+	//session.Values["shipTo"] = res
+	//session.Save(r, w)
+
+	//pg.Name = name
+	//pg.Address = address
+	//log.Println("shipTo in ffl lic in address: ", session.Values["fflLic"])
+	//log.Println("shipTo in ffl name: ", session.Values["fflName"])
+	//log.Println("shipTo in ffl address: ", session.Values["fflAddress"])
+
+	//log.Println("ffl: ", pg.FFL)
+	h.Templates.ExecuteTemplate(w, "dcartShipFflAddress.html", &pg)
 }

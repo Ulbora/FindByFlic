@@ -99,7 +99,7 @@ func main() {
 		h.FFLFinder = new(ffl.MockFinder)
 		h.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html",
 			"./static/dcartConfig.html", "./static/head.html", "./static/dcartAddFfl.html",
-			"./static/dcartChosenFfl.html"))
+			"./static/dcartChosenFfl.html", "./static/dcartShippedFfl.html", "./static/dcartShipFflAddress.html"))
 		//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
 		router := mux.NewRouter()
 		router.HandleFunc("/", h.HandleIndex).Methods("GET")
@@ -108,6 +108,8 @@ func main() {
 		router.HandleFunc("/dcartcb", h.HandleDcartCb).Methods("POST")
 		router.HandleFunc("/dcartFindffl", h.HandleDcartFindFFL).Methods("POST")
 		router.HandleFunc("/dcartChooseFFL", h.HandleDcartChooseFFL).Methods("GET")
+		router.HandleFunc("/dcartShipffl", h.HandleDcartShipFFL).Methods("POST")
+		router.HandleFunc("/dcartShipfflAddress", h.HandleDcartShipFFLAddress).Methods("GET")
 
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 

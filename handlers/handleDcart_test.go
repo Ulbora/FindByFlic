@@ -212,3 +212,30 @@ func TestHandler_HandleDcartShipFFL(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestHandler_HandleDcartShipFFLAddress(t *testing.T) {
+
+	var h Handler
+	h.Templates = template.Must(template.ParseFiles("dcartShippedFfl.html"))
+	h.FFLFinder = new(ffl.MockFinder)
+	var s usession.Session
+	h.Sess = s
+
+	r, _ := http.NewRequest("GET", "/challenge?order=1234&carturl=https://somecart.3dcart.com", nil)
+	w := httptest.NewRecorder()
+
+	h.Sess.InitSessionStore(w, r)
+	session, _ := h.Sess.GetSession(r)
+	var finder = new(ffl.MockFinder)
+	f1 := finder.GetFFL("12345")
+	session.Values["fflLic"] = f1.LicNumber
+	session.Save(r, w)
+	//session.Values["carturl"] = "https://testcart.3dcart.com"
+	//session.Save(r, w)
+	h.HandleDcartShipFFLAddress(w, r)
+	// body, _ := ioutil.ReadAll(w.Result().Body)
+	// fmt.Println("ffl list Res body", string(body))
+	if w.Code != 200 {
+		t.Fail()
+	}
+}
