@@ -10,7 +10,8 @@
             "args": [
                 "get",
                 "github.com/gorilla/mux",
-                "github.com/Ulbora/dbinterface"
+                "github.com/Ulbora/dbinterface",
+                "github.com/Ulbora/dcartapi"
             ],
             "problemMatcher": [
                 "$go"
@@ -23,7 +24,8 @@
             "args": [
                 "install",
                 "github.com/gorilla/mux",
-                "github.com/Ulbora/dbinterface"
+                "github.com/Ulbora/dbinterface",
+                "github.com/Ulbora/dcartapi"
             ],
             "problemMatcher": [
                 "$go"

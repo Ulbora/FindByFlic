@@ -36,4 +36,10 @@ type FFL struct {
 	Name      string `json:"name"`
 	Address   string `json:"address"`
 	LicNumber string `json:"licNumber"`
+	Address2  string `json:"address2"`
+	City      string `json:"city"`
+	State     string `json:"state"`
+	Zip       string `json:"zip"`
+	Country   string `json:"country"`
+	Phone     string `json:"phone"`
 }

@@ -31,9 +31,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	api "github.com/Ulbora/dcartapi"
 	"html/template"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	dbi "github.com/Ulbora/dbinterface"
@@ -146,14 +149,6 @@ func TestHandler_HandleDcartCbRemove(t *testing.T) {
 	}
 }
 
-func TestHandler_close(t *testing.T) {
-	suc := dcDel.DB.Close()
-	fmt.Println("closing db")
-	if !suc {
-		t.Fail()
-	}
-}
-
 func TestHandler_HandleDcartFindFFL(t *testing.T) {
 	var h Handler
 	h.Templates = template.Must(template.ParseFiles("dcartAddFfl.html"))
@@ -218,10 +213,27 @@ func TestHandler_HandleDcartShipFFLAddress(t *testing.T) {
 	var h Handler
 	h.Templates = template.Must(template.ParseFiles("dcartShippedFfl.html"))
 	h.FFLFinder = new(ffl.MockFinder)
+	h.FindFFLDCart = dcart
+	var secureURL string
+	var dapi api.API
+	if len(os.Args) == 4 {
+		privateKey := os.Args[2]
+		//token := os.Args[3]
+		secureURL = os.Args[3]
+		dapi.PrivateKey = privateKey
+		//dapi.Token = token
+		//dapi.SecureURL = secureURL
+
+		log.Println("privateKey: ", privateKey)
+		//log.Println("token: ", token)
+		//log.Println("secureURL: ", secureURL)
+		h.DcartAPI = &dapi
+	}
+
 	var s usession.Session
 	h.Sess = s
 
-	r, _ := http.NewRequest("GET", "/challenge?order=1234&carturl=https://somecart.3dcart.com", nil)
+	r, _ := http.NewRequest("GET", "/challenge?invoice=1041&carturl="+secureURL, nil)
 	w := httptest.NewRecorder()
 
 	h.Sess.InitSessionStore(w, r)
@@ -236,6 +248,14 @@ func TestHandler_HandleDcartShipFFLAddress(t *testing.T) {
 	// body, _ := ioutil.ReadAll(w.Result().Body)
 	// fmt.Println("ffl list Res body", string(body))
 	if w.Code != 200 {
+		t.Fail()
+	}
+}
+
+func TestHandler_close(t *testing.T) {
+	suc := dcDel.DB.Close()
+	fmt.Println("closing db")
+	if !suc {
 		t.Fail()
 	}
 }

@@ -32,6 +32,7 @@ import (
 	"fmt"
 	dbi "github.com/Ulbora/dbinterface"
 	mydb "github.com/Ulbora/dbinterface/mysql"
+	api "github.com/Ulbora/dcartapi"
 	usession "github.com/Ulbora/go-better-sessions"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -55,6 +56,16 @@ var db dbi.Database
 var mdb mydb.MyDB
 
 func main() {
+	var privateKey string
+	if len(os.Args) >= 2 {
+		privateKey = os.Args[1]
+	}
+	if privateKey == "" {
+		privateKey = os.Getenv("PRIVATE_KEY")
+	}
+	var dapi api.API
+	dapi.PrivateKey = privateKey
+	h.DcartAPI = &dapi
 
 	if os.Getenv("DATABASE_HOST") != "" {
 		mdb.Host = os.Getenv("DATABASE_HOST")

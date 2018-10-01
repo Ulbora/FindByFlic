@@ -28,6 +28,7 @@ package handlers
 import (
 	del "FindByFlic/dbdelegate"
 	ffl "FindByFlic/fflfinder"
+	api "github.com/Ulbora/dcartapi"
 	usession "github.com/Ulbora/go-better-sessions"
 	"github.com/gorilla/sessions"
 	"html/template"
@@ -41,6 +42,7 @@ type Handler struct {
 	FindFFLDCart del.FindFFLDCart
 	Sess         usession.Session
 	FFLFinder    ffl.FFLFinder
+	DcartAPI     api.DcartAPI
 }
 
 //PageParams PageParams

@@ -29,8 +29,10 @@ import (
 	dcd "FindByFlic/dbdelegate"
 	"encoding/json"
 	"io/ioutil"
+	"strconv"
 	//dbi "github.com/Ulbora/dbinterface"
 	//ffl "FindByFlic/fflfinder"
+	api "github.com/Ulbora/dcartapi"
 	"log"
 	"net/http"
 )
@@ -173,19 +175,50 @@ func (h *Handler) HandleDcartShipFFLAddress(w http.ResponseWriter, r *http.Reque
 	//log.Println("name in ship: ", name)
 	//address := r.FormValue("address")
 	//log.Println("address in ship: ", address)
-	var order = r.URL.Query().Get("order")
+	var invoice = r.URL.Query().Get("invoice")
 	var carturl = r.URL.Query().Get("carturl")
-	log.Println("order in ffl address: ", order)
+	log.Println("invoice in ffl address: ", invoice)
 	log.Println("carturl in ffl address: ", carturl)
 	//log.Println("shipTo: ", session.Values["shipTo"])
 	var pg FFLPageParams
 	fflLic := session.Values["fflLic"]
 	var licNum string
 	if fflLic != nil {
+		ures := h.FindFFLDCart.GetUser(carturl)
+		log.Println("user found: ", ures)
 		licNum = fflLic.(string)
 		log.Println("ffl lic in address: ", licNum)
 		res := h.FFLFinder.GetFFL(licNum)
 		pg.FFL = res
+
+		odr := h.DcartAPI.GetOrder(invoice, ures.SecureURL, ures.TokenKey)
+		var s api.Shipment
+		s.ShipmentID = 0
+		s.ShipmentFirstName = "FFL"
+		s.ShipmentLastName = "Lic # " + res.LicNumber
+		s.ShipmentCompany = res.Name
+		s.ShipmentAddress = res.Address2
+		s.ShipmentCity = res.City
+		s.ShipmentState = res.State
+		s.ShipmentZipCode = res.Zip
+		s.ShipmentCountry = res.Country
+		s.ShipmentPhone = res.Phone
+		s.ShipmentTax = 0
+		s.ShipmentWeight = 1
+		s.ShipmentTrackingCode = ""
+		s.ShipmentUserID = ""
+		s.ShipmentNumber = 1
+		s.ShipmentAddressTypeID = 0
+		var oid = strconv.FormatInt(odr.OrderID, 10)
+		sres := h.DcartAPI.AddShippingAddress(&s, oid, ures.SecureURL, ures.TokenKey)
+		if len(*sres) == 0 || (*sres)[0].Status != "201" {
+			log.Println("Address Error: ", sres)
+		}
+		log.Println("Address: ", sres)
+		session.Values["fflLic"] = nil
+		session.Save(r, w)
+		// var capi  api.API
+		// capi.
 		//log.Println("shipTo in ffl in address: ", res)
 	}
 
