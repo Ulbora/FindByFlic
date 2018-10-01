@@ -3,12 +3,15 @@
 <html>
 {{template "head"}}
 
-<body>    
+<body>
     <div class="ui container">
         <div class="ffl-list">
             <div class="zip">
                 <div class="zip-title">Firearms will be shipped to the following FFL:</div>
             </div>
+            {{if .NoFFL}}
+                <div class="no-ffl">FFL Not Chosen</div>
+            {{else}}
             <table class="ui unstackable selectable celled table">
                 <tbody>
                     <tr>
@@ -16,7 +19,9 @@
                         <td>{{.FFL.Address}}</td>
                     </tr>
                 </tbody>
-            </table>            
+            </table>
+            {{end}}
+
         </div>
     </div>
 </body>

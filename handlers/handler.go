@@ -61,6 +61,7 @@ type FFLPageParams struct {
 	Zip     string
 	Name    string
 	Address string
+	NoFFL   bool
 }
 
 func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {

@@ -39,24 +39,6 @@ import (
 
 //HandleDcartIndex HandleDcartIndex
 func (h *Handler) HandleDcartIndex(w http.ResponseWriter, r *http.Request) {
-	// h.Sess.InitSessionStore(w, r)
-	// var order = r.URL.Query().Get("order")
-	// var carturl = r.URL.Query().Get("carturl")
-	// session := h.getSession(w, r)
-	// session.Values["order"] = order
-	// session.Values["carturl"] = carturl
-	// serr := session.Save(r, w)
-	// if serr != nil {
-	// 	log.Println("Session Err:", serr)
-	// }
-
-	// var p PageParams
-	// p.Order = order
-	// p.CartURL = carturl
-	// // p.URL = secureURL
-	// // p.Key = privateKey
-	// // p.Token = token
-	// h.Templates.ExecuteTemplate(w, "dcartIndex.html", &p)
 	h.Templates.ExecuteTemplate(w, "dcartIndex.html", nil)
 }
 
@@ -167,7 +149,7 @@ func (h *Handler) HandleDcartShipFFL(w http.ResponseWriter, r *http.Request) {
 
 //HandleDcartShipFFLAddress HandleDcartShipFFLAddress
 func (h *Handler) HandleDcartShipFFLAddress(w http.ResponseWriter, r *http.Request) {
-	//h.Sess.InitSessionStore(w, r)
+	h.Sess.InitSessionStore(w, r)
 	session := h.getSession(w, r)
 	//licNum := r.FormValue("id")
 	//log.Println("licNum in ship: ", licNum)
@@ -182,44 +164,55 @@ func (h *Handler) HandleDcartShipFFLAddress(w http.ResponseWriter, r *http.Reque
 	//log.Println("shipTo: ", session.Values["shipTo"])
 	var pg FFLPageParams
 	fflLic := session.Values["fflLic"]
+	log.Println("fflLic: ", fflLic)
 	var licNum string
 	if fflLic != nil {
 		ures := h.FindFFLDCart.GetUser(carturl)
-		log.Println("user found: ", ures)
-		licNum = fflLic.(string)
-		log.Println("ffl lic in address: ", licNum)
-		res := h.FFLFinder.GetFFL(licNum)
-		pg.FFL = res
+		if ures.Enabled {
+			log.Println("user found: ", ures)
+			licNum = fflLic.(string)
+			log.Println("ffl lic in address: ", licNum)
+			res := h.FFLFinder.GetFFL(licNum)
+			pg.FFL = res
 
-		odr := h.DcartAPI.GetOrder(invoice, ures.SecureURL, ures.TokenKey)
-		var s api.Shipment
-		s.ShipmentID = 0
-		s.ShipmentFirstName = "FFL"
-		s.ShipmentLastName = "Lic # " + res.LicNumber
-		s.ShipmentCompany = res.Name
-		s.ShipmentAddress = res.Address2
-		s.ShipmentCity = res.City
-		s.ShipmentState = res.State
-		s.ShipmentZipCode = res.Zip
-		s.ShipmentCountry = res.Country
-		s.ShipmentPhone = res.Phone
-		s.ShipmentTax = 0
-		s.ShipmentWeight = 1
-		s.ShipmentTrackingCode = ""
-		s.ShipmentUserID = ""
-		s.ShipmentNumber = 1
-		s.ShipmentAddressTypeID = 0
-		var oid = strconv.FormatInt(odr.OrderID, 10)
-		sres := h.DcartAPI.AddShippingAddress(&s, oid, ures.SecureURL, ures.TokenKey)
-		if len(*sres) == 0 || (*sres)[0].Status != "201" {
-			log.Println("Address Error: ", sres)
+			odr := h.DcartAPI.GetOrder(invoice, ures.SecureURL, ures.TokenKey)
+			if odr.OrderID != 0 {
+				var s api.Shipment
+				s.ShipmentID = 0
+				s.ShipmentFirstName = "FFL"
+				s.ShipmentLastName = "Lic # " + res.LicNumber
+				s.ShipmentCompany = res.Name
+				s.ShipmentAddress = res.Address2
+				s.ShipmentCity = res.City
+				s.ShipmentState = res.State
+				s.ShipmentZipCode = res.Zip
+				s.ShipmentCountry = res.Country
+				s.ShipmentPhone = res.Phone
+				s.ShipmentTax = 0
+				s.ShipmentWeight = 1
+				s.ShipmentTrackingCode = ""
+				s.ShipmentUserID = ""
+				s.ShipmentNumber = 1
+				s.ShipmentAddressTypeID = 0
+				var oid = strconv.FormatInt(odr.OrderID, 10)
+				sres := h.DcartAPI.AddShippingAddress(&s, oid, ures.SecureURL, ures.TokenKey)
+				if len(*sres) == 0 || (*sres)[0].Status != "201" {
+					log.Println("Address Error: ", sres)
+				}
+				log.Println("Address: ", sres)
+				session.Values["fflLic"] = nil
+				session.Save(r, w)
+				// var capi  api.API
+				// capi.
+				//log.Println("shipTo in ffl in address: ", res)
+			} else {
+				pg.NoFFL = true
+			}
+		} else {
+			pg.NoFFL = true
 		}
-		log.Println("Address: ", sres)
-		session.Values["fflLic"] = nil
-		session.Save(r, w)
-		// var capi  api.API
-		// capi.
-		//log.Println("shipTo in ffl in address: ", res)
+	} else {
+		pg.NoFFL = true
 	}
 
 	//session.Values["shipTo"] = res

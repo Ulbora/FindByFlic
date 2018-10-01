@@ -172,3 +172,9 @@ body {
 .ffl-button {
   float: left;
 }
+.no-ffl {
+  width: 100%;
+  float: left;
+  text-align: center;
+  padding: 2% 0 0 0;
+}

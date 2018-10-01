@@ -135,7 +135,7 @@ func (d *DCartDeligate) GetUser(url string) *DCartUser {
 	var a []interface{}
 	a = append(a, url)
 	rowPtr := d.DB.Get(dcartGetByStore, a...)
-	if rowPtr != nil {
+	if len(rowPtr.Row) != 0 {
 		//fid, err := strconv.ParseInt(foundRow[0], 10, 64)
 		foundRow := rowPtr.Row
 		rtn.SecureURL = foundRow[1]
@@ -148,13 +148,6 @@ func (d *DCartDeligate) GetUser(url string) *DCartUser {
 		} else {
 			rtn.Enabled = enabled
 		}
-		// cTime, errCtime := time.Parse(timeFormat, (*foundRow)[3])
-		// if errCtime != nil {
-		// 	fmt.Print(errCtime)
-		// } else {
-		// 	rtn.CreateDate = cTime
-		// }
-
 	}
 	return &rtn
 }
