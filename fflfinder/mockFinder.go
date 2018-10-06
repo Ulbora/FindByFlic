@@ -33,90 +33,69 @@ type MockFinder struct {
 func (f *MockFinder) FindFFL(zip string) *[]FFL {
 	var rtn []FFL
 	var ffl1 FFL
-	ffl1.Name = "Wild West Traders"
-	ffl1.Address = "123 Austell Rd, Marietta, GA 30166"
-	ffl1.Address2 = "123 Austell Rd"
-	ffl1.City = "Marietta"
-	ffl1.State = "GA"
-	ffl1.Zip = "30133"
-	ffl1.Country = "USA"
-	ffl1.Phone = "800 123 4567"
-	ffl1.LicNumber = "456778888"
+	ffl1.LicenseName = "Wild West Traders"
+	ffl1.PremiseStreet = "123 Austell Rd"
+	ffl1.PremiseCity = "Marietta"
+	ffl1.PremiseState = "GA"
+	ffl1.PremiseZipCode = "30133"
+	ffl1.VoicePhone = "800 123 4567"
 	rtn = append(rtn, ffl1)
 
 	var ffl2 FFL
-	ffl2.Name = "Wild Bills Traders"
-	ffl2.Address = "123 Windy Hill Rd, Marietta, GA 30159"
-	ffl2.Address2 = "123 Austell Rd"
-	ffl2.City = "Marietta"
-	ffl2.State = "GA"
-	ffl2.Zip = "30133"
-	ffl2.Country = "USA"
-	ffl2.Phone = "800 123 4567"
-	ffl2.LicNumber = "78899999"
+	ffl2.LicenseName = "Wild West Traders 2"
+	ffl2.PremiseStreet = "123 Austell Rd"
+	ffl2.PremiseCity = "Marietta"
+	ffl2.PremiseState = "GA"
+	ffl2.PremiseZipCode = "30133"
+	ffl2.VoicePhone = "800 123 4567"
 	rtn = append(rtn, ffl2)
 
 	var ffl3 FFL
-	ffl3.Name = "Bill's Trading"
-	ffl3.Address = "123 South Cobb Dr, Marietta, GA 30112"
-	ffl3.Address2 = "123 Austell Rd"
-	ffl3.City = "Marietta"
-	ffl3.State = "GA"
-	ffl3.Zip = "30133"
-	ffl3.Country = "USA"
-	ffl3.Phone = "800 123 4567"
-	ffl3.LicNumber = "1123554"
+	ffl3.LicenseName = "Wild West Traders 3"
+	ffl3.PremiseStreet = "123 Austell Rd"
+	ffl3.PremiseCity = "Marietta"
+	ffl3.PremiseState = "GA"
+	ffl3.PremiseZipCode = "30133"
+	ffl3.VoicePhone = "800 123 4567"
 	rtn = append(rtn, ffl3)
 
 	var ffl4 FFL
-	ffl4.Name = "Bills Guns"
-	ffl4.Address = "123 Atlanta Rd, Marietta, GA 30166"
-	ffl4.Address2 = "123 Austell Rd"
-	ffl4.City = "Marietta"
-	ffl4.State = "GA"
-	ffl4.Zip = "30133"
-	ffl4.Country = "USA"
-	ffl4.Phone = "800 123 4567"
-	ffl4.LicNumber = "7894562222"
+	ffl4.LicenseName = "Wild West Traders 4"
+	ffl4.PremiseStreet = "123 Austell Rd"
+	ffl4.PremiseCity = "Marietta"
+	ffl4.PremiseState = "GA"
+	ffl4.PremiseZipCode = "30133"
+	ffl4.VoicePhone = "800 123 4567"
 	rtn = append(rtn, ffl4)
 
 	var ffl5 FFL
-	ffl5.Name = "Bills Arms"
-	ffl5.Address = "123 Atlanta Rd, Actworth, GA 30166"
-	ffl5.Address2 = "123 Austell Rd"
-	ffl5.City = "Marietta"
-	ffl5.State = "GA"
-	ffl5.Zip = "30133"
-	ffl5.Country = "USA"
-	ffl5.Phone = "800 123 4567"
-	ffl5.LicNumber = "7894562222"
+	ffl5.LicenseName = "Wild West Traders 5"
+	ffl5.PremiseStreet = "123 Austell Rd"
+	ffl5.PremiseCity = "Marietta"
+	ffl5.PremiseState = "GA"
+	ffl5.PremiseZipCode = "30133"
+	ffl5.VoicePhone = "800 123 4567"
 	rtn = append(rtn, ffl5)
 
 	var ffl6 FFL
-	ffl6.Name = "Johns Guns"
-	ffl6.Address = "123 Windy Hill Rd, Marietta, GA 30166"
-	ffl6.Address2 = "123 Austell Rd"
-	ffl6.City = "Marietta"
-	ffl6.State = "GA"
-	ffl6.Zip = "30133"
-	ffl6.Country = "USA"
-	ffl6.Phone = "800 123 4567"
-	ffl6.LicNumber = "7894562222"
+	ffl6.LicenseName = "Wild West Traders 5"
+	ffl6.PremiseStreet = "123 Austell Rd"
+	ffl6.PremiseCity = "Marietta"
+	ffl6.PremiseState = "GA"
+	ffl6.PremiseZipCode = "30133"
+	ffl6.VoicePhone = "800 123 4567"
 	rtn = append(rtn, ffl6)
 	return &rtn
 }
 
 //GetFFL GetFFL
-func (f *MockFinder) GetFFL(licNum string) *FFL {
+func (f *MockFinder) GetFFL(id int64) *FFL {
 	var ffl1 FFL
-	ffl1.Name = "Wild West Traders"
-	ffl1.Address = "123 Austell Rd, Marietta, GA 30166"
-	ffl1.Address2 = "123 Austell Rd"
-	ffl1.City = "Marietta"
-	ffl1.State = "GA"
-	ffl1.Zip = "30133"
-	ffl1.Country = "USA"
-	ffl1.Phone = "800 123 4567"
-	ffl1.LicNumber = "456778888"
+	ffl1.LicenseName = "Wild West Traders"
+	ffl1.PremiseStreet = "123 Austell Rd"
+	ffl1.PremiseCity = "Marietta"
+	ffl1.PremiseState = "GA"
+	ffl1.PremiseZipCode = "30133"
+	ffl1.VoicePhone = "800 123 4567"
 	return &ffl1
 }

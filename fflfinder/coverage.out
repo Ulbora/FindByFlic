@@ -1,5 +1,21 @@
 mode: set
-FindByFlic/fflfinder/fflFinder.go:33.45,35.2 1 0
-FindByFlic/fflfinder/fflFinder.go:38.45,40.2 1 0
-FindByFlic/fflfinder/mockFinder.go:33.49,71.2 32 1
-FindByFlic/fflfinder/mockFinder.go:74.49,80.2 5 1
+FindByFlic/fflfinder/mockFinder.go:33.49,89.2 50 1
+FindByFlic/fflfinder/mockFinder.go:92.44,101.2 8 1
+FindByFlic/fflfinder/fflFinder.go:51.45,53.25 2 1
+FindByFlic/fflfinder/fflFinder.go:56.2,59.26 4 1
+FindByFlic/fflfinder/fflFinder.go:82.2,82.13 1 1
+FindByFlic/fflfinder/fflFinder.go:53.25,55.3 1 0
+FindByFlic/fflfinder/fflFinder.go:59.26,61.26 2 1
+FindByFlic/fflfinder/fflFinder.go:61.26,80.4 2 1
+FindByFlic/fflfinder/fflFinder.go:86.40,88.25 2 1
+FindByFlic/fflfinder/fflFinder.go:91.2,94.25 4 1
+FindByFlic/fflfinder/fflFinder.go:97.2,97.12 1 1
+FindByFlic/fflfinder/fflFinder.go:88.25,90.3 1 0
+FindByFlic/fflfinder/fflFinder.go:94.25,96.3 1 1
+FindByFlic/fflfinder/fflFinder.go:100.40,105.26 5 1
+FindByFlic/fflfinder/fflFinder.go:117.2,117.12 1 1
+FindByFlic/fflfinder/fflFinder.go:105.26,110.17 5 1
+FindByFlic/fflfinder/fflFinder.go:113.3,113.20 1 1
+FindByFlic/fflfinder/fflFinder.go:110.17,112.4 1 0
+FindByFlic/fflfinder/fflFinder.go:113.20,115.4 1 1
+FindByFlic/fflfinder/fflFinder.go:120.47,138.2 17 1

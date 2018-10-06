@@ -25,26 +25,53 @@
 
 package fflfinder
 
-//FFLFinder FFLFinder
-type FFLFinder interface {
-	FindFFL(zip string) *[]FFL
-	GetFFL(id int64) *FFL
+import (
+	"fmt"
+
+	"testing"
+
+	dbi "github.com/Ulbora/dbinterface"
+	mydb "github.com/Ulbora/dbinterface/mysql"
+)
+
+var fflFinder FFLFinder
+var finder Finder
+var db dbi.Database
+
+func TestFinder_init(t *testing.T) {
+	var mdb mydb.MyDB
+	mdb.Host = "localhost:3306"
+	mdb.User = "admin"
+	mdb.Password = "admin"
+	mdb.Database = "ffl_list_10012018"
+	db = &mdb
+	finder.DB = db
+	fflFinder = &finder
+	suc := finder.DB.Connect()
+	if !suc {
+		t.Fail()
+	}
 }
 
-//FFL FFL
-type FFL struct {
-	ID             int64  `json:"id"`
-	LicRegn        string `json:"licRegn"`
-	LicDist        string `json:"licDist"`
-	LicCnty        string `json:"licCnty"`
-	LicType        string `json:"licType"`
-	LicXprdte      string `json:"licXprdte"`
-	LicSeqn        string `json:"licSeqn"`
-	LicenseName    string `json:"licenseName"`
-	BusinessName   string `json:"businessName"`
-	PremiseStreet  string `json:"premiseStreet"`
-	PremiseCity    string `json:"premiseCity"`
-	PremiseState   string `json:"premiseState"`
-	PremiseZipCode string `json:"premiseZipCode"`
-	VoicePhone     string `json:"voicePhone"`
+func TestFinder_testConnection(t *testing.T) {
+	res := finder.testConnection()
+	if !res {
+		t.Fail()
+	}
+}
+
+func TestFinder_FindFFL(t *testing.T) {
+	res := fflFinder.FindFFL("30144")
+	fmt.Println("ffl list: ", res)
+	if len(*res) == 0 {
+		t.Fail()
+	}
+}
+
+func TestFinder_GetFFL(t *testing.T) {
+	res := fflFinder.GetFFL(5)
+	fmt.Println("ffl 5: ", res)
+	if res.ID == 0 {
+		t.Fail()
+	}
 }

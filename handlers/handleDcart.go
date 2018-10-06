@@ -106,9 +106,10 @@ func (h *Handler) HandleDcartFindFFL(w http.ResponseWriter, r *http.Request) {
 
 //HandleDcartChooseFFL HandleDcartChooseFFL
 func (h *Handler) HandleDcartChooseFFL(w http.ResponseWriter, r *http.Request) {
-	licNum := r.FormValue("id")
+	idstr := r.FormValue("id")
 	zip := r.FormValue("zip")
-	res := h.FFLFinder.GetFFL(licNum)
+	id, _ := strconv.ParseInt(idstr, 10, 64)
+	res := h.FFLFinder.GetFFL(id)
 	var pg FFLPageParams
 	pg.FFL = res
 	pg.Zip = zip
@@ -120,7 +121,8 @@ func (h *Handler) HandleDcartChooseFFL(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) HandleDcartShipFFL(w http.ResponseWriter, r *http.Request) {
 	h.Sess.InitSessionStore(w, r)
 	session := h.getSession(w, r)
-	licNum := r.FormValue("id")
+	idstr := r.FormValue("id")
+	id, _ := strconv.ParseInt(idstr, 10, 64)
 	//log.Println("licNum in ship: ", licNum)
 	//name := r.FormValue("name")
 	//log.Println("name in ship: ", name)
@@ -128,10 +130,10 @@ func (h *Handler) HandleDcartShipFFL(w http.ResponseWriter, r *http.Request) {
 	// log.Println("address in ship: ", address)
 	// log.Println("order: ", session.Values["order"])
 	// log.Println("carturl: ", session.Values["carturl"])
-	res := h.FFLFinder.GetFFL(licNum)
+	res := h.FFLFinder.GetFFL(id)
 	//var theFFL interface{}
 	//theFFL = *res
-	session.Values["fflLic"] = licNum
+	session.Values["fflLic"] = idstr
 	//session.Values["fflName"] = name
 	//session.Values["fflAddress"] = address
 	serr := session.Save(r, w)
@@ -163,16 +165,17 @@ func (h *Handler) HandleDcartShipFFLAddress(w http.ResponseWriter, r *http.Reque
 	log.Println("carturl in ffl address: ", carturl)
 	//log.Println("shipTo: ", session.Values["shipTo"])
 	var pg FFLPageParams
-	fflLic := session.Values["fflLic"]
-	log.Println("fflLic: ", fflLic)
-	var licNum string
-	if fflLic != nil {
+	fflLicID := session.Values["fflLic"]
+	log.Println("fflLic: ", fflLicID)
+	//var licNum string
+	if fflLicID != nil {
+		id := fflLicID.(int64)
 		ures := h.FindFFLDCart.GetUser(carturl)
 		if ures.Enabled {
 			log.Println("user found: ", ures)
-			licNum = fflLic.(string)
-			log.Println("ffl lic in address: ", licNum)
-			res := h.FFLFinder.GetFFL(licNum)
+			//licNum = fflLic.(string)
+			log.Println("ffl lic in address: ", id)
+			res := h.FFLFinder.GetFFL(id)
 			pg.FFL = res
 
 			odr := h.DcartAPI.GetOrder(invoice, ures.SecureURL, ures.TokenKey)
@@ -180,14 +183,19 @@ func (h *Handler) HandleDcartShipFFLAddress(w http.ResponseWriter, r *http.Reque
 				var s api.Shipment
 				s.ShipmentID = 0
 				s.ShipmentFirstName = "FFL"
-				s.ShipmentLastName = "Lic # " + res.LicNumber
-				s.ShipmentCompany = res.Name
-				s.ShipmentAddress = res.Address2
-				s.ShipmentCity = res.City
-				s.ShipmentState = res.State
-				s.ShipmentZipCode = res.Zip
-				s.ShipmentCountry = res.Country
-				s.ShipmentPhone = res.Phone
+				s.ShipmentLastName = "Lic # " + res.LicRegn + res.LicDist + res.LicCnty + res.LicType + res.LicXprdte + res.LicSeqn
+				if res.BusinessName != "" {
+					s.ShipmentCompany = res.BusinessName
+				} else {
+					s.ShipmentCompany = res.LicenseName
+				}
+
+				s.ShipmentAddress = res.PremiseStreet
+				s.ShipmentCity = res.PremiseCity
+				s.ShipmentState = res.PremiseState
+				s.ShipmentZipCode = res.PremiseZipCode
+				s.ShipmentCountry = "USA"
+				s.ShipmentPhone = res.VoicePhone
 				s.ShipmentTax = 0
 				s.ShipmentWeight = 1
 				s.ShipmentTrackingCode = ""

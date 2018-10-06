@@ -87,7 +87,7 @@ func TestHandler_HandleDcartIndex(t *testing.T) {
 
 func TestHandler_HandleDcartConfig(t *testing.T) {
 	var h Handler
-	h.Templates = template.Must(template.ParseFiles("dcartIndex.html"))
+	h.Templates = template.Must(template.ParseFiles("dcartConfig.html"))
 	//h.TokenMap = make(map[string]*oauth2.Token)
 	var s usession.Session
 	h.Sess = s
@@ -99,7 +99,7 @@ func TestHandler_HandleDcartConfig(t *testing.T) {
 	//var resp oauth2.Token
 	//resp.AccessToken = "bbbnn"
 	//h.TokenMap["123456"] = &resp
-	h.HandleDcartIndex(w, r)
+	h.HandleDcartConfig(w, r)
 
 	fmt.Println("body: ", w.Code)
 	if w.Code != 200 {
@@ -128,6 +128,27 @@ func TestHandler_HandleDcartCb(t *testing.T) {
 	}
 }
 
+func TestHandler_HandleDcartCbMedia(t *testing.T) {
+	var h Handler
+	h.FindFFLDCart = dcart
+	dcu := new(dcd.DCartUser)
+	dcu.Action = "AUTHORIZE"
+	dcu.PublicKey = "123456"
+	dcu.SecureURL = "http://someurl"
+	dcu.TokenKey = "123456"
+	dcu.TimeStamp = "12-25-2018 01:01:00"
+	aJSON, _ := json.Marshal(dcu)
+
+	r, _ := http.NewRequest("POST", "/challenge", bytes.NewBuffer(aJSON))
+	//r.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	h.HandleDcartCb(w, r)
+	fmt.Println("body: ", w.Code)
+	if w.Code != 415 {
+		t.Fail()
+	}
+}
+
 func TestHandler_HandleDcartCbRemove(t *testing.T) {
 	var h Handler
 	h.FindFFLDCart = dcart
@@ -145,6 +166,27 @@ func TestHandler_HandleDcartCbRemove(t *testing.T) {
 	h.HandleDcartCb(w, r)
 	fmt.Println("body: ", w.Code)
 	if w.Code != 200 {
+		t.Fail()
+	}
+}
+
+func TestHandler_HandleDcartCbRemoveFail(t *testing.T) {
+	var h Handler
+	h.FindFFLDCart = dcart
+	dcu := new(dcd.DCartUser)
+	dcu.Action = "REMOVE1"
+	dcu.PublicKey = "123456"
+	dcu.SecureURL = "http://someurl"
+	dcu.TokenKey = "123456"
+	dcu.TimeStamp = "12-25-2018 01:01:00"
+	aJSON, _ := json.Marshal(dcu)
+
+	r, _ := http.NewRequest("POST", "/challenge", bytes.NewBuffer(aJSON))
+	r.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	h.HandleDcartCb(w, r)
+	fmt.Println("body: ", w.Code)
+	if w.Code != 400 {
 		t.Fail()
 	}
 }
@@ -239,8 +281,8 @@ func TestHandler_HandleDcartShipFFLAddress(t *testing.T) {
 	h.Sess.InitSessionStore(w, r)
 	session, _ := h.Sess.GetSession(r)
 	var finder = new(ffl.MockFinder)
-	f1 := finder.GetFFL("12345")
-	session.Values["fflLic"] = f1.LicNumber
+	f1 := finder.GetFFL(5)
+	session.Values["fflLic"] = f1.ID
 	session.Save(r, w)
 	//session.Values["carturl"] = "https://testcart.3dcart.com"
 	//session.Save(r, w)
