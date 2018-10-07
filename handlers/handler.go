@@ -52,6 +52,7 @@ type PageParams struct {
 	URL     string
 	Key     string
 	Token   string
+	Enabled string
 }
 
 //FFLPageParams FFLPageParams
@@ -62,6 +63,7 @@ type FFLPageParams struct {
 	Name    string
 	Address string
 	NoFFL   bool
+	Enabled string
 }
 
 func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {

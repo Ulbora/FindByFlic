@@ -32,6 +32,7 @@ import (
 	"strconv"
 	//dbi "github.com/Ulbora/dbinterface"
 	//ffl "FindByFlic/fflfinder"
+	ffl "FindByFlic/fflfinder"
 	api "github.com/Ulbora/dcartapi"
 	"log"
 	"net/http"
@@ -39,7 +40,18 @@ import (
 
 //HandleDcartIndex HandleDcartIndex
 func (h *Handler) HandleDcartIndex(w http.ResponseWriter, r *http.Request) {
-	h.Templates.ExecuteTemplate(w, "dcartIndex.html", nil)
+	//h.Sess.InitSessionStore(w, r)
+	var carturl = r.URL.Query().Get("carturl")
+	log.Println("carturl in ffl address: ", carturl)
+	ures := h.FindFFLDCart.GetUser(carturl)
+	log.Println("ures in index: ", ures)
+	var pg PageParams
+	if ures != nil && ures.Enabled {
+		pg.Enabled = "true"
+	} else {
+		pg.Enabled = "false"
+	}
+	h.Templates.ExecuteTemplate(w, "dcartIndex.html", &pg)
 }
 
 //HandleDcartConfig HandleDcartConfig
@@ -96,10 +108,15 @@ func (h *Handler) HandleDcartCb(w http.ResponseWriter, r *http.Request) {
 //HandleDcartFindFFL HandleDcartFindFFL
 func (h *Handler) HandleDcartFindFFL(w http.ResponseWriter, r *http.Request) {
 	zip := r.FormValue("zip")
-	res := h.FFLFinder.FindFFL(zip)
+	use := r.FormValue("use")
+	var res = new([]ffl.FFL)
+	if use == "true" {
+		res = h.FFLFinder.FindFFL(zip)
+	}
 	var pg FFLPageParams
 	pg.FFLList = res
 	pg.Zip = zip
+	pg.Enabled = use
 	//log.Println("ffl list: ", pg.FFLList)
 	h.Templates.ExecuteTemplate(w, "dcartAddFfl.html", &pg)
 }
@@ -108,11 +125,13 @@ func (h *Handler) HandleDcartFindFFL(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) HandleDcartChooseFFL(w http.ResponseWriter, r *http.Request) {
 	idstr := r.FormValue("id")
 	zip := r.FormValue("zip")
+	use := r.FormValue("use")
 	id, _ := strconv.ParseInt(idstr, 10, 64)
 	res := h.FFLFinder.GetFFL(id)
 	var pg FFLPageParams
 	pg.FFL = res
 	pg.Zip = zip
+	pg.Enabled = use
 	//log.Println("ffl: ", pg.FFL)
 	h.Templates.ExecuteTemplate(w, "dcartChosenFfl.html", &pg)
 }
@@ -122,6 +141,7 @@ func (h *Handler) HandleDcartShipFFL(w http.ResponseWriter, r *http.Request) {
 	h.Sess.InitSessionStore(w, r)
 	session := h.getSession(w, r)
 	idstr := r.FormValue("id")
+	use := r.FormValue("use")
 	id, _ := strconv.ParseInt(idstr, 10, 64)
 	//log.Println("licNum in ship: ", licNum)
 	//name := r.FormValue("name")
@@ -142,6 +162,7 @@ func (h *Handler) HandleDcartShipFFL(w http.ResponseWriter, r *http.Request) {
 	}
 	var pg FFLPageParams
 	pg.FFL = res
+	pg.Enabled = use
 	//pg.Name = name
 	//pg.Address = address
 	//log.Println("shipTo: ", session.Values["fflLic"])
@@ -184,7 +205,7 @@ func (h *Handler) HandleDcartShipFFLAddress(w http.ResponseWriter, r *http.Reque
 				s.ShipmentID = 0
 				s.ShipmentFirstName = "FFL"
 				s.ShipmentLastName = "Lic # " + res.LicRegn + res.LicDist + res.LicCnty + res.LicType + res.LicXprdte + res.LicSeqn
-				if res.BusinessName != "" {
+				if res.BusinessName != "NULL" {
 					s.ShipmentCompany = res.BusinessName
 				} else {
 					s.ShipmentCompany = res.LicenseName

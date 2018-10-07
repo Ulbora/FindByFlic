@@ -65,6 +65,7 @@ func TestHandler_init(t *testing.T) {
 
 func TestHandler_HandleDcartIndex(t *testing.T) {
 	var h Handler
+	h.FindFFLDCart = dcart
 	h.Templates = template.Must(template.ParseFiles("dcartIndex.html"))
 	//h.TokenMap = make(map[string]*oauth2.Token)
 	var s usession.Session
@@ -122,6 +123,29 @@ func TestHandler_HandleDcartCb(t *testing.T) {
 	r.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	h.HandleDcartCb(w, r)
+	fmt.Println("body: ", w.Code)
+	if w.Code != 200 {
+		t.Fail()
+	}
+}
+
+func TestHandler_HandleDcartIndexUrl(t *testing.T) {
+	var h Handler
+	h.FindFFLDCart = dcart
+	h.Templates = template.Must(template.ParseFiles("dcartIndex.html"))
+	//h.TokenMap = make(map[string]*oauth2.Token)
+	var s usession.Session
+	h.Sess = s
+	r, _ := http.NewRequest("GET", "/challenge?carturl=http://someurl", nil)
+	w := httptest.NewRecorder()
+	h.Sess.InitSessionStore(w, r)
+	session, _ := h.Sess.GetSession(r)
+	session.Save(r, w)
+	//var resp oauth2.Token
+	//resp.AccessToken = "bbbnn"
+	//h.TokenMap["123456"] = &resp
+	h.HandleDcartIndex(w, r)
+
 	fmt.Println("body: ", w.Code)
 	if w.Code != 200 {
 		t.Fail()
@@ -250,8 +274,9 @@ func TestHandler_HandleDcartShipFFL(t *testing.T) {
 	}
 }
 
+//to test
+//go test -coverprofile=coverage.out -args privateKey secureURL
 func TestHandler_HandleDcartShipFFLAddress(t *testing.T) {
-
 	var h Handler
 	h.Templates = template.Must(template.ParseFiles("dcartShippedFfl.html"))
 	h.FFLFinder = new(ffl.MockFinder)
@@ -271,7 +296,6 @@ func TestHandler_HandleDcartShipFFLAddress(t *testing.T) {
 		//log.Println("secureURL: ", secureURL)
 		h.DcartAPI = &dapi
 	}
-
 	var s usession.Session
 	h.Sess = s
 

@@ -33,6 +33,8 @@ type MockFinder struct {
 func (f *MockFinder) FindFFL(zip string) *[]FFL {
 	var rtn []FFL
 	var ffl1 FFL
+	ffl1.ID = 1
+	ffl1.BusinessName = "NULL"
 	ffl1.LicenseName = "Wild West Traders"
 	ffl1.PremiseStreet = "123 Austell Rd"
 	ffl1.PremiseCity = "Marietta"
@@ -42,6 +44,8 @@ func (f *MockFinder) FindFFL(zip string) *[]FFL {
 	rtn = append(rtn, ffl1)
 
 	var ffl2 FFL
+	ffl2.ID = 1
+	ffl2.BusinessName = "NULL"
 	ffl2.LicenseName = "Wild West Traders 2"
 	ffl2.PremiseStreet = "123 Austell Rd"
 	ffl2.PremiseCity = "Marietta"
@@ -51,6 +55,8 @@ func (f *MockFinder) FindFFL(zip string) *[]FFL {
 	rtn = append(rtn, ffl2)
 
 	var ffl3 FFL
+	ffl3.ID = 1
+	ffl3.BusinessName = "NULL"
 	ffl3.LicenseName = "Wild West Traders 3"
 	ffl3.PremiseStreet = "123 Austell Rd"
 	ffl3.PremiseCity = "Marietta"
@@ -60,6 +66,8 @@ func (f *MockFinder) FindFFL(zip string) *[]FFL {
 	rtn = append(rtn, ffl3)
 
 	var ffl4 FFL
+	ffl4.ID = 1
+	ffl4.BusinessName = "Wild West Traders Four"
 	ffl4.LicenseName = "Wild West Traders 4"
 	ffl4.PremiseStreet = "123 Austell Rd"
 	ffl4.PremiseCity = "Marietta"
@@ -69,6 +77,8 @@ func (f *MockFinder) FindFFL(zip string) *[]FFL {
 	rtn = append(rtn, ffl4)
 
 	var ffl5 FFL
+	ffl5.ID = 1
+	ffl5.BusinessName = "NULL"
 	ffl5.LicenseName = "Wild West Traders 5"
 	ffl5.PremiseStreet = "123 Austell Rd"
 	ffl5.PremiseCity = "Marietta"
@@ -78,6 +88,8 @@ func (f *MockFinder) FindFFL(zip string) *[]FFL {
 	rtn = append(rtn, ffl5)
 
 	var ffl6 FFL
+	ffl6.ID = 1
+	ffl6.BusinessName = "NULL"
 	ffl6.LicenseName = "Wild West Traders 5"
 	ffl6.PremiseStreet = "123 Austell Rd"
 	ffl6.PremiseCity = "Marietta"
@@ -91,6 +103,8 @@ func (f *MockFinder) FindFFL(zip string) *[]FFL {
 //GetFFL GetFFL
 func (f *MockFinder) GetFFL(id int64) *FFL {
 	var ffl1 FFL
+	ffl1.ID = 1
+	ffl1.BusinessName = "NULL"
 	ffl1.LicenseName = "Wild West Traders"
 	ffl1.PremiseStreet = "123 Austell Rd"
 	ffl1.PremiseCity = "Marietta"

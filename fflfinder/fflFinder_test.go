@@ -75,3 +75,11 @@ func TestFinder_GetFFL(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestFinder_close(t *testing.T) {
+	suc := finder.DB.Close()
+	fmt.Println("closing db")
+	if !suc {
+		t.Fail()
+	}
+}

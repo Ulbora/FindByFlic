@@ -8,6 +8,7 @@
         <form method="post" action="/dcartFindffl">
             <div class=zip-wrapper>
                 <label class="zip-label">Zip</label> <input name="zip" class="zip-input" type="text" placeholder="zip code">
+                <input name="use" type="hidden" value="{{.Enabled}}">
                 <button class="mini circular ui icon button" type="submit">
                     <i class="search icon"></i>
                 </button>
@@ -30,9 +31,14 @@
                 </thead>
                 <tbody>
                     {{range .FFLList}}
-                    <tr onclick="window.location.href='/dcartChooseFFL?id={{.LicNumber}}&zip={{$.Zip}}'">
-                        <td>{{.Name}}</td>
-                        <td>{{.Address}}</td>
+                    <tr onclick="window.location.href='/dcartChooseFFL?id={{.ID}}&zip={{$.Zip}}&use={{$.Enabled}}'">
+                        {{if ne .BusinessName "NULL"}}
+                            <td>{{.BusinessName}}</td>
+                            <td>{{.PremiseStreet}}, {{.PremiseCity}}, {{.PremiseState}} </td>
+                        {{else}}
+                            <td>{{.LicenseName}}</td>
+                            <td>{{.PremiseStreet}}, {{.PremiseCity}}, {{.PremiseState}} </td>
+                        {{end}}
                     </tr>
                     {{end}}
                 </tbody>

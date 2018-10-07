@@ -8,6 +8,7 @@
         <form method="post" action="/dcartFindffl">
             <div class=zip-wrapper>
                 <label class="zip-label">Zip</label> <input name="zip" class="zip-input" type="text" placeholder="zip code">
+                <input name="use" type="hidden" value="{{.Enabled}}">
                 <button class="mini circular ui icon button" type="submit">
                     <i class="search icon"></i>
                 </button>
@@ -22,11 +23,16 @@
             <table class="ui unstackable selectable celled table">
                 <tbody>
                     <tr>
-                        <td>{{.FFL.Name}}</td>
-                        <td>{{.FFL.Address}}</td>
+                        {{if ne .FFL.BusinessName "NULL"}}
+                            <td>{{.FFL.BusinessName}}</td>
+                            <td>{{.FFL.PremiseStreet}}, {{.FFL.PremiseCity}}, {{.FFL.PremiseState}} </td>
+                        {{else}}
+                            <td>{{.FFL.LicenseName}}</td>
+                            <td>{{.FFL.PremiseStreet}}, {{.FFL.PremiseCity}}, {{.FFL.PremiseState}} </td>
+                        {{end}}
                     </tr>
                 </tbody>
-            </table>            
+            </table>
         </div>
     </div>
 </body>
