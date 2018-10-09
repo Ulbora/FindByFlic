@@ -35,7 +35,8 @@
                 <div class="ffl-button">
                     <form method="post" action="/dcartShipffl">
                         <div class="ffl-send">
-                            <input name="id" type="hidden" value="{{.FFL.ID}}">                            
+                            <input name="id" type="hidden" value="{{.FFL.ID}}">
+                            <input name="use" type="hidden" value="{{.Enabled}}">                            
                             <button class="ui right labeled icon button" type="submit">
                                 Ship<i class="right arrow icon"></i>
                             </button>

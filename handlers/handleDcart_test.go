@@ -37,6 +37,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strconv"
 	"testing"
 
 	dbi "github.com/Ulbora/dbinterface"
@@ -306,7 +307,8 @@ func TestHandler_HandleDcartShipFFLAddress(t *testing.T) {
 	session, _ := h.Sess.GetSession(r)
 	var finder = new(ffl.MockFinder)
 	f1 := finder.GetFFL(5)
-	session.Values["fflLic"] = f1.ID
+	idstr := strconv.FormatInt(f1.ID, 10)
+	session.Values["fflLic"] = idstr
 	session.Save(r, w)
 	//session.Values["carturl"] = "https://testcart.3dcart.com"
 	//session.Save(r, w)

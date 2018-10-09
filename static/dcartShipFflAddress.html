@@ -10,13 +10,19 @@
                 <div class="zip-title">Firearms will be shipped to the following FFL:</div>
             </div>
             {{if .NoFFL}}
-                <div class="no-ffl">FFL Not Chosen</div>
+            <div class="no-ffl">FFL Not Chosen</div>
             {{else}}
             <table class="ui unstackable selectable celled table">
                 <tbody>
                     <tr>
-                        <td>{{.FFL.Name}}</td>
-                        <td>{{.FFL.Address}}</td>
+                        {{if ne .FFL.BusinessName "NULL"}}
+                            <td>{{.FFL.BusinessName}}</td>
+                            <td>{{.FFL.PremiseStreet}}, {{.FFL.PremiseCity}}, {{.FFL.PremiseState}} </td>
+                        {{else}}
+                            <td>{{.FFL.LicenseName}}</td>
+                            <td>{{.FFL.PremiseStreet}}, {{.FFL.PremiseCity}}, {{.FFL.PremiseState}} </td>
+                        {{end}}
+
                     </tr>
                 </tbody>
             </table>

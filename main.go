@@ -30,7 +30,6 @@ import (
 	ffl "FindByFlic/fflfinder"
 	hand "FindByFlic/handlers"
 	"fmt"
-	dbi "github.com/Ulbora/dbinterface"
 	mydb "github.com/Ulbora/dbinterface/mysql"
 	api "github.com/Ulbora/dcartapi"
 	usession "github.com/Ulbora/go-better-sessions"
@@ -50,11 +49,6 @@ var templates *template.Template
 var h hand.Handler
 var s usession.Session
 
-var dcart dcd.FindFFLDCart
-var dcDel dcd.DCartDeligate
-var db dbi.Database
-var mdb mydb.MyDB
-
 func main() {
 	var privateKey string
 	if len(os.Args) >= 2 {
@@ -67,6 +61,57 @@ func main() {
 	dapi.PrivateKey = privateKey
 	h.DcartAPI = &dapi
 
+	s.MaxAge = sessingTimeToLive
+	s.Name = userSession
+	if os.Getenv("SESSION_SECRET_KEY") != "" {
+		s.SessionKey = os.Getenv("SESSION_SECRET_KEY")
+	} else {
+		s.SessionKey = "115722gggg14ddfg4567"
+	}
+	h.Sess = s
+
+	userDb := connectUserDB(&h)
+	defer userDb.DB.Close()
+	fmt.Println("del db: ", h.FindFFLDCart)
+
+	fflDb := connectFFLDB(&h)
+	defer fflDb.DB.Close()
+	fmt.Println("del db: ", h.FFLFinder)
+
+	h.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html",
+		"./static/dcartConfig.html", "./static/head.html", "./static/dcartAddFfl.html",
+		"./static/dcartChosenFfl.html", "./static/dcartShippedFfl.html", "./static/dcartShipFflAddress.html"))
+	//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
+	router := mux.NewRouter()
+	//dcart
+	router.HandleFunc("/", h.HandleIndex).Methods("GET")
+	router.HandleFunc("/dcart", h.HandleDcartIndex).Methods("GET")
+	router.HandleFunc("/dcartconfig", h.HandleDcartConfig).Methods("GET")
+	router.HandleFunc("/dcartcb", h.HandleDcartCb).Methods("POST")
+	router.HandleFunc("/dcartFindffl", h.HandleDcartFindFFL).Methods("POST")
+	router.HandleFunc("/dcartChooseFFL", h.HandleDcartChooseFFL).Methods("GET")
+	router.HandleFunc("/dcartShipffl", h.HandleDcartShipFFL).Methods("POST")
+	router.HandleFunc("/dcartShipfflAddress", h.HandleDcartShipFFLAddress).Methods("GET")
+	//dcart rest services
+	router.HandleFunc("/dcart/rs/ffllist/{zip}", h.HandleFFLList).Methods("GET")
+	router.HandleFunc("/dcart/rs/ffl/{id}", h.HandleFFLGet).Methods("GET")
+	router.HandleFunc("/dcart/rs/shipment", h.HandleFFLAddAddress).Methods("POST")
+
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+
+	//<iframe src="https://localhost:8060"></iframe>
+
+	log.Println("Online Account Creator!")
+	log.Println("Listening on :8070...")
+	//http.ListenAndServe(":8070", router)
+	http.ListenAndServeTLS(":8070", "certLocal.pem", "keyLocal.pem", router)
+	//http.ListenAndServeTLS(":8070", "cert.pem", "key.pem", router)
+
+}
+
+func connectUserDB(h *hand.Handler) *dcd.DCartDeligate {
+	var dcDel dcd.DCartDeligate
+	var mdb = new(mydb.MyDB)
 	if os.Getenv("DATABASE_HOST") != "" {
 		mdb.Host = os.Getenv("DATABASE_HOST")
 	} else {
@@ -90,48 +135,46 @@ func main() {
 	} else {
 		mdb.Database = "dcart_flic"
 	}
-	db = &mdb
-	dcDel.DB = db
-	dcart = &dcDel
+	dcDel.DB = mdb
 	suc := dcDel.DB.Connect()
-	if suc {
-		defer dcDel.DB.Close()
-		h.FindFFLDCart = dcart
-		fmt.Println("del db: ", h.FindFFLDCart)
+	if !suc {
+		log.Println("User DB connect failed")
+	}
+	h.FindFFLDCart = &dcDel
+	return &dcDel
+}
 
-		s.MaxAge = sessingTimeToLive
-		s.Name = userSession
-		if os.Getenv("SESSION_SECRET_KEY") != "" {
-			s.SessionKey = os.Getenv("SESSION_SECRET_KEY")
-		} else {
-			s.SessionKey = "115722gggg14ddfg4567"
-		}
-		h.Sess = s
-		h.FFLFinder = new(ffl.MockFinder)
-		h.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html",
-			"./static/dcartConfig.html", "./static/head.html", "./static/dcartAddFfl.html",
-			"./static/dcartChosenFfl.html", "./static/dcartShippedFfl.html", "./static/dcartShipFflAddress.html"))
-		//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
-		router := mux.NewRouter()
-		router.HandleFunc("/", h.HandleIndex).Methods("GET")
-		router.HandleFunc("/dcart", h.HandleDcartIndex).Methods("GET")
-		router.HandleFunc("/dcartconfig", h.HandleDcartConfig).Methods("GET")
-		router.HandleFunc("/dcartcb", h.HandleDcartCb).Methods("POST")
-		router.HandleFunc("/dcartFindffl", h.HandleDcartFindFFL).Methods("POST")
-		router.HandleFunc("/dcartChooseFFL", h.HandleDcartChooseFFL).Methods("GET")
-		router.HandleFunc("/dcartShipffl", h.HandleDcartShipFFL).Methods("POST")
-		router.HandleFunc("/dcartShipfflAddress", h.HandleDcartShipFFLAddress).Methods("GET")
-
-		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-
-		//<iframe src="https://localhost:8060"></iframe>
-
-		log.Println("Online Account Creator!")
-		log.Println("Listening on :8070...")
-		//http.ListenAndServe(":8070", router)
-		http.ListenAndServeTLS(":8070", "certLocal.pem", "keyLocal.pem", router)
-		//http.ListenAndServeTLS(":8070", "cert.pem", "key.pem", router)
-
+func connectFFLDB(h *hand.Handler) *ffl.Finder {
+	var finder ffl.Finder
+	var fflmdb = new(mydb.MyDB)
+	if os.Getenv("FFL_DATABASE_HOST") != "" {
+		fflmdb.Host = os.Getenv("FFL_DATABASE_HOST")
+	} else {
+		fflmdb.Host = "localhost:3306"
 	}
 
+	if os.Getenv("FFL_DATABASE_USER_NAME") != "" {
+		fflmdb.User = os.Getenv("FFL_DATABASE_USER_NAME")
+	} else {
+		fflmdb.User = "admin"
+	}
+
+	if os.Getenv("FFL_DATABASE_USER_PASSWORD") != "" {
+		fflmdb.Password = os.Getenv("FFL_DATABASE_USER_PASSWORD")
+	} else {
+		fflmdb.Password = "admin"
+	}
+
+	if os.Getenv("FFL_DATABASE_NAME") != "" {
+		fflmdb.Database = os.Getenv("FFL_DATABASE_NAME")
+	} else {
+		fflmdb.Database = "ffl_list_10012018"
+	}
+	finder.DB = fflmdb
+	suc := finder.DB.Connect()
+	if !suc {
+		log.Println("FFL DB connect failed")
+	}
+	h.FFLFinder = &finder
+	return &finder
 }

@@ -26,7 +26,6 @@
 package dbdelegate
 
 import (
-	"fmt"
 	dbi "github.com/Ulbora/dbinterface"
 	"log"
 	"strconv"
@@ -127,7 +126,7 @@ func (d *DCartDeligate) RemoveUser(cu *DCartUser) bool {
 //GetUser GetUser
 func (d *DCartDeligate) GetUser(url string) *DCartUser {
 	if !d.testConnection() {
-		log.Println("test database failed, reconnection database")
+		log.Println("test database failed in get user, reconnection database")
 		d.DB.Connect()
 	}
 	var rtn DCartUser
@@ -156,12 +155,12 @@ func (d *DCartDeligate) testConnection() bool {
 	var rtn = false
 	var a []interface{}
 	rowPtr := d.DB.Test(dcartTest, a...)
-	log.Println("rowPtr", rowPtr)
+	//log.Println("rowPtr", rowPtr)
 	if len(rowPtr.Row) != 0 {
 		foundRow := rowPtr.Row
 		int64Val, err := strconv.ParseInt(foundRow[0], 10, 0)
-		log.Print("Records found during test ")
-		log.Println("Records found during test :", int64Val)
+		//log.Print("Records found during test ")
+		//log.Println("Records found during test :", int64Val)
 		if err != nil {
 			log.Print(err)
 		}
@@ -179,6 +178,6 @@ func cleanURL(url string) string {
 	} else {
 		rtn = strings.TrimPrefix(url, "http://")
 	}
-	fmt.Println("url:", rtn)
+	//log.Println("url:", rtn)
 	return rtn
 }

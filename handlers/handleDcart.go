@@ -190,8 +190,13 @@ func (h *Handler) HandleDcartShipFFLAddress(w http.ResponseWriter, r *http.Reque
 	log.Println("fflLic: ", fflLicID)
 	//var licNum string
 	if fflLicID != nil {
-		id := fflLicID.(int64)
+		//idstr := fflLicID.(string)
+		idstr := fflLicID.(string)
+		///id := int64(idint)
+		log.Println("ffl id: ", idstr)
+		id, _ := strconv.ParseInt(idstr, 10, 64)
 		ures := h.FindFFLDCart.GetUser(carturl)
+		log.Println("user found before if: ", ures)
 		if ures.Enabled {
 			log.Println("user found: ", ures)
 			//licNum = fflLic.(string)
