@@ -1,12 +1,164 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>Find FFL by Zip</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>Find FFL by Zip Configuration go here</div>       
-    </body>
+{{template "head"}}
+
+<body>
+    <div class="ui container">
+        <h1 class="index">Find FFL by Zip</h1>
+        <div class="ui segments">
+            <div class="ui segment">
+                <h3>There are two ways to use Find FFL by Zip.</h3>
+                <ul class="ui list">
+                    <li>As an iframe inside a template</li>
+                    <li>As REST services called using jQuery or other methods inside a custom template.</li>
+                </ul>
+                <div class="ui warning message">
+                    <i class="close icon"></i>
+                    <div class="header">
+                        Warning: No one may use this screen, in lieu of the required certified copy of a
+                        Federal Firearms License, to acquire a firearm!
+                    </div>
+                    The data obtained from this site is not a substitute for a certified copy of the license.
+                </div>
+            </div>
+            <div class="ui segments">
+                <div class="ui segment">
+                    <h3>Using iframes</h3>
+                    <p>Using iframe involves inserting two iframe inside a template.
+                        The first iframe is inserted inside <strong>checkout #1</strong> and the second is inserted
+                        inside <strong>checkout #4</strong>.</p>
+                    <div class="ui segment">
+                        <h4>Template Code: Checkout #1</h4>
+                        <p>Allows customer to pick an FFL at the start of the checkout process.</p>
+                        <code>
+                            &lt;iframe src="https://www.findbyffl.com/dcart?carturl=[store_url]"&gt;&lt;/iframe&gt;
+                        </code>
+                    </div>
+                    <div class="ui segment">
+                        <h4>Template Code: Checkout #4</h4>
+                        <p>Adds a shipment for the order for the chosen FFL.</p>
+                        <code>
+                            &lt;iframe src="https://www.findbyffl.com/dcartShipfflAddress?invoice=[invoicenum]&carturl=[store_url]"&gt;&lt;/iframe&gt;
+                        </code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui segments">
+                <div class="ui segment">
+                    <h3>Using REST Services</h3>
+                    <p>Find FFL by Zip comes with built in REST services for getting FFL information.</strong>.</p>
+                    <div class="ui segment">
+                        <h4>Get a FFL list by zip code:</h4>
+                        <p>Allows template designers to populate a dropdown with FFLs based on a zip code.</p>
+                        <ul class="ui list">
+                            <li>Method: GET</li>
+                            <li>Header - SecureUrl: 3dcart merchant's Secure URL</li>
+                        </ul>
+                        <code>
+                            https://www.findbyffl.com/dcart/rs/ffllist/30066
+                        </code>
+
+                        <p class="restres">Response:</p>
+                        <div class="codedev">
+                                [
+                                {
+                                    "id": 17113,
+                                    "licRegn": "1",
+                                    "licDist": "58",
+                                    "licCnty": "067",
+                                    "licType": "02",
+                                    "licXprdte": "1D",
+                                    "licSeqn": "07750",
+                                    "licenseName": "ACWORTH PAWN LLC",
+                                    "businessName": "CROSSROADS PAWN",
+                                    "premiseStreet": "2543 BELLS FERRY RD SUITE 400",
+                                    "premiseCity": "MARIETTA",
+                                    "premiseState": "GA",
+                                    "premiseZipCode": "30066",
+                                    "voicePhone": "7704850314"
+                                },
+                                {
+                                    "id": 17115,
+                                    "licRegn": "1",
+                                    "licDist": "58",
+                                    "licCnty": "067",
+                                    "licType": "01",
+                                    "licXprdte": "9L",
+                                    "licSeqn": "09767",
+                                    "licenseName": "COLBERT, WINDEE & STEPHEN SR",
+                                    "businessName": "CLASSIC COLLECTION FIREARMS OF GA",
+                                    "premiseStreet": "4990 CANTON RD STE 200",
+                                    "premiseCity": "MARIETTA",
+                                    "premiseState": "GA",
+                                    "premiseZipCode": "30066",
+                                    "voicePhone": "6784450470"
+                                }]
+                            </div>
+                    </div>
+
+                    <div class="ui segment">
+                        <h4>Get a FFL by id:</h4>
+                        <p>Allows template designers to populate FFL information for a particular FFL.</p>
+                        <ul class="ui list">
+                            <li>Method: GET</li>
+                            <li>Header - SecureUrl: 3dcart merchant's Secure URL</li>
+                        </ul>
+                        <code>
+                                https://www.findbyffl.com/dcart/rs/ffl/17115
+                            </code>
+
+                        <p class="restres">Response:</p>
+                        <div class="codedev">
+                                   {
+                                        "id": 17115,
+                                        "licRegn": "1",
+                                        "licDist": "58",
+                                        "licCnty": "067",
+                                        "licType": "01",
+                                        "licXprdte": "9L",
+                                        "licSeqn": "09767",
+                                        "licenseName": "COLBERT, WINDEE & STEPHEN SR",
+                                        "businessName": "CLASSIC COLLECTION FIREARMS OF GA",
+                                        "premiseStreet": "4990 CANTON RD STE 200",
+                                        "premiseCity": "MARIETTA",
+                                        "premiseState": "GA",
+                                        "premiseZipCode": "30066",
+                                        "voicePhone": "6784450470"
+                                    }
+                            </div>
+                    </div>
+
+                    <div class="ui segment">
+                            <h4>Add a shipment for an FFL:</h4>
+                            <p>Allows template designers to add a shipment to an order for a particular FFL.</p>
+                            <ul class="ui list">
+                                <li>Method: POST</li>
+                                <li>Header - SecureUrl: 3dcart merchant's Secure URL</li>
+                                <li>Header - Content-Type: application/json</li>
+                                <li>URL - https://www.findbyffl.com/dcart/rs/shipment</li>
+                            </ul>
+                            <p class="restres">Request:</p>
+                            <code>                                    
+                                    {
+                                        "invoice": "1054",
+                                        "fflId": "17115"
+                                    }
+                            </code>
+    
+                            <p class="restres">Response:</p>
+                            <div class="codedev">
+                                    {
+                                        "success": true
+                                    }
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
 </html>
