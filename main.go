@@ -33,6 +33,7 @@ import (
 	mydb "github.com/Ulbora/dbinterface/mysql"
 	api "github.com/Ulbora/dcartapi"
 	usession "github.com/Ulbora/go-better-sessions"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"html/template"
 	"log"
@@ -103,7 +104,10 @@ func main() {
 
 	log.Println("Online Account Creator!")
 	log.Println("Listening on :8070...")
-	http.ListenAndServe(":8070", router)
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "secureurl", "Content-Type"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	http.ListenAndServe(":8070", handlers.CORS(headersOk, originsOk, methodsOk)(router))
 	//http.ListenAndServeTLS(":8070", "certLocal.pem", "keyLocal.pem", router)
 	//http.ListenAndServeTLS(":8070", "cert.pem", "key.pem", router)
 

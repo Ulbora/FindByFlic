@@ -112,7 +112,12 @@ func (f *Finder) processFFL(r *[]string) *FFL {
 	ffl.LicXprdte = (*r)[5]
 	ffl.LicSeqn = (*r)[6]
 	ffl.LicenseName = (*r)[7]
-	ffl.BusinessName = (*r)[8]
+	log.Println("bus: ", (*r)[8])
+	if (*r)[8] != "NULL" {
+		ffl.BusinessName = (*r)[8]
+	} else {
+		ffl.BusinessName = (*r)[7]
+	}
 	ffl.PremiseStreet = (*r)[9]
 	ffl.PremiseCity = (*r)[10]
 	ffl.PremiseState = (*r)[11]

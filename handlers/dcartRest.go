@@ -93,8 +93,9 @@ func (h *Handler) HandleFFLAddAddress(w http.ResponseWriter, r *http.Request) {
 	} else {
 		url := r.Header.Get("SecureURL")
 		ures := h.FindFFLDCart.GetUser(url)
-		//log.Println("user in rest: ", ures)
+		log.Println("user in rest: ", ures)
 		if ures.Enabled {
+			//log.Println("req: ", r.Body)
 			addReq := new(AddressRequest)
 			decoder := json.NewDecoder(r.Body)
 			error := decoder.Decode(addReq)
@@ -110,9 +111,10 @@ func (h *Handler) HandleFFLAddAddress(w http.ResponseWriter, r *http.Request) {
 					log.Println("ffl ID error: ", err)
 				}
 				res := h.FFLFinder.GetFFL(id)
-				//log.Println("ffl lic rest: ", res)
+				log.Println("ffl lic rest: ", res)
+				log.Println("addReq before getOrder: ", addReq)
 				odr := h.DcartAPI.GetOrder(addReq.Invoice, ures.SecureURL, ures.TokenKey)
-				//log.Println("odr: ", odr)
+				log.Println("odr: ", odr)
 				if odr.OrderID != 0 && res.ID != 0 {
 					var s api.Shipment
 					s.ShipmentID = 0

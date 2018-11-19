@@ -10,6 +10,7 @@
             "args": [
                 "get",
                 "github.com/gorilla/mux",
+                "github.com/gorilla/handlers",
                 "github.com/Ulbora/dbinterface",
                 "github.com/Ulbora/dcartapi"
             ],
@@ -24,6 +25,7 @@
             "args": [
                 "install",
                 "github.com/gorilla/mux",
+                "github.com/gorilla/handlers",
                 "github.com/Ulbora/dbinterface",
                 "github.com/Ulbora/dcartapi"
             ],
