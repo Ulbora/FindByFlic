@@ -26,12 +26,9 @@
 package handlers
 
 import (
-	dcd "FindByFlic/dbdelegate"
-	ffl "FindByFlic/fflfinder"
 	"bytes"
 	"encoding/json"
 	"fmt"
-	api "github.com/Ulbora/dcartapi"
 	"html/template"
 	"log"
 	"net/http"
@@ -40,8 +37,12 @@ import (
 	"strconv"
 	"testing"
 
+	dcd "github.com/Ulbora/FindByFlic/dbdelegate"
+	ffl "github.com/Ulbora/FindByFlic/fflfinder"
+	api "github.com/Ulbora/dcartapi"
+
 	dbi "github.com/Ulbora/dbinterface"
-	mydb "github.com/Ulbora/dbinterface/mysql"
+	mydb "github.com/Ulbora/dbinterface_mysql"
 	usession "github.com/Ulbora/go-better-sessions"
 )
 
@@ -67,7 +68,7 @@ func TestHandler_init(t *testing.T) {
 func TestHandler_HandleDcartIndex(t *testing.T) {
 	var h Handler
 	h.FindFFLDCart = dcart
-	h.Templates = template.Must(template.ParseFiles("dcartIndex.html"))
+	h.Templates = template.Must(template.ParseFiles("testhtml/dcartIndex.html"))
 	//h.TokenMap = make(map[string]*oauth2.Token)
 	var s usession.Session
 	h.Sess = s
@@ -89,7 +90,7 @@ func TestHandler_HandleDcartIndex(t *testing.T) {
 
 func TestHandler_HandleDcartConfig(t *testing.T) {
 	var h Handler
-	h.Templates = template.Must(template.ParseFiles("dcartConfig.html"))
+	h.Templates = template.Must(template.ParseFiles("testhtml/dcartConfig.html"))
 	//h.TokenMap = make(map[string]*oauth2.Token)
 	var s usession.Session
 	h.Sess = s
@@ -133,7 +134,7 @@ func TestHandler_HandleDcartCb(t *testing.T) {
 func TestHandler_HandleDcartIndexUrl(t *testing.T) {
 	var h Handler
 	h.FindFFLDCart = dcart
-	h.Templates = template.Must(template.ParseFiles("dcartIndex.html"))
+	h.Templates = template.Must(template.ParseFiles("testhtml/dcartIndex.html"))
 	//h.TokenMap = make(map[string]*oauth2.Token)
 	var s usession.Session
 	h.Sess = s
@@ -218,7 +219,7 @@ func TestHandler_HandleDcartCbRemoveFail(t *testing.T) {
 
 func TestHandler_HandleDcartFindFFL(t *testing.T) {
 	var h Handler
-	h.Templates = template.Must(template.ParseFiles("dcartAddFfl.html"))
+	h.Templates = template.Must(template.ParseFiles("testhtml/dcartAddFfl.html"))
 	h.FFLFinder = new(ffl.MockFinder)
 
 	r, _ := http.NewRequest("GET", "/challenge?zip=12345", nil)
@@ -233,7 +234,7 @@ func TestHandler_HandleDcartFindFFL(t *testing.T) {
 
 func TestHandler_HandleDcartChooseFFL(t *testing.T) {
 	var h Handler
-	h.Templates = template.Must(template.ParseFiles("dcartChosenFfl.html"))
+	h.Templates = template.Must(template.ParseFiles("testhtml/dcartChosenFfl.html"))
 	h.FFLFinder = new(ffl.MockFinder)
 
 	r, _ := http.NewRequest("GET", "/challenge?zip=12345", nil)
@@ -254,7 +255,7 @@ func TestHandler_HandleDcartChooseFFL(t *testing.T) {
 func TestHandler_HandleDcartShipFFL(t *testing.T) {
 
 	var h Handler
-	h.Templates = template.Must(template.ParseFiles("dcartShippedFfl.html"))
+	h.Templates = template.Must(template.ParseFiles("testhtml/dcartShippedFfl.html"))
 	h.FFLFinder = new(ffl.MockFinder)
 	var s usession.Session
 	h.Sess = s
@@ -279,7 +280,7 @@ func TestHandler_HandleDcartShipFFL(t *testing.T) {
 //go test -coverprofile=coverage.out -args privateKey secureURL
 func TestHandler_HandleDcartShipFFLAddress(t *testing.T) {
 	var h Handler
-	h.Templates = template.Must(template.ParseFiles("dcartShippedFfl.html"))
+	h.Templates = template.Must(template.ParseFiles("testhtml/dcartShippedFfl.html"))
 	h.FFLFinder = new(ffl.MockFinder)
 	h.FindFFLDCart = dcart
 	var secureURL string

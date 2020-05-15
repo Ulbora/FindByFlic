@@ -26,14 +26,15 @@
 package handlers
 
 import (
-	del "FindByFlic/dbdelegate"
-	ffl "FindByFlic/fflfinder"
-	api "github.com/Ulbora/dcartapi"
-	usession "github.com/Ulbora/go-better-sessions"
-	"github.com/gorilla/sessions"
 	"html/template"
 	"log"
 	"net/http"
+
+	del "github.com/Ulbora/FindByFlic/dbdelegate"
+	ffl "github.com/Ulbora/FindByFlic/fflfinder"
+	api "github.com/Ulbora/dcartapi"
+	usession "github.com/Ulbora/go-better-sessions"
+	"github.com/gorilla/sessions"
 )
 
 //Handler Handler

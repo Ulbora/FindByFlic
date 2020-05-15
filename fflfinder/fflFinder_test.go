@@ -31,7 +31,7 @@ import (
 	"testing"
 
 	dbi "github.com/Ulbora/dbinterface"
-	mydb "github.com/Ulbora/dbinterface/mysql"
+	mydb "github.com/Ulbora/dbinterface_mysql"
 )
 
 var fflFinder FFLFinder

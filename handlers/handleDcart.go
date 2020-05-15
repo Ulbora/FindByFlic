@@ -26,16 +26,19 @@
 package handlers
 
 import (
-	dcd "FindByFlic/dbdelegate"
 	"encoding/json"
 	"io/ioutil"
 	"strconv"
+
+	dcd "github.com/Ulbora/FindByFlic/dbdelegate"
+
 	//dbi "github.com/Ulbora/dbinterface"
 	//ffl "FindByFlic/fflfinder"
-	ffl "FindByFlic/fflfinder"
-	api "github.com/Ulbora/dcartapi"
 	"log"
 	"net/http"
+
+	ffl "github.com/Ulbora/FindByFlic/fflfinder"
+	api "github.com/Ulbora/dcartapi"
 )
 
 //HandleDcartIndex HandleDcartIndex

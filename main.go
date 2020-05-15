@@ -26,19 +26,20 @@
 package main
 
 import (
-	dcd "FindByFlic/dbdelegate"
-	ffl "FindByFlic/fflfinder"
-	hand "FindByFlic/handlers"
 	"fmt"
-	mydb "github.com/Ulbora/dbinterface/mysql"
-	api "github.com/Ulbora/dcartapi"
-	usession "github.com/Ulbora/go-better-sessions"
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+
+	dcd "github.com/Ulbora/FindByFlic/dbdelegate"
+	ffl "github.com/Ulbora/FindByFlic/fflfinder"
+	hand "github.com/Ulbora/FindByFlic/handlers"
+	mydb "github.com/Ulbora/dbinterface_mysql"
+	api "github.com/Ulbora/dcartapi"
+	usession "github.com/Ulbora/go-better-sessions"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 const (
@@ -182,3 +183,5 @@ func connectFFLDB(h *hand.Handler) *ffl.Finder {
 	h.FFLFinder = &finder
 	return &finder
 }
+
+//go mod init github.com/Ulbora/FindByFlic

@@ -26,11 +26,13 @@
 package dbdelegate
 
 import (
-	dbi "github.com/Ulbora/dbinterface"
-	"log"
+	//"log"
 	"strconv"
 	"strings"
 	"time"
+
+	lg "github.com/Ulbora/Level_Logger"
+	dbi "github.com/Ulbora/dbinterface"
 )
 
 //DCartUser DCartUser
@@ -52,17 +54,26 @@ type FindFFLDCart interface {
 
 //DCartDeligate DCartDeligate
 type DCartDeligate struct {
-	DB dbi.Database
+	DB  dbi.Database
+	Log *lg.Logger
+}
+
+//GetNew GetNew
+func (d *DCartDeligate) GetNew() FindFFLDCart {
+	return d
 }
 
 //AddUser AddUser
 func (d *DCartDeligate) AddUser(cu *DCartUser) (bool, int64) {
+	d.Log.Debug("in add user")
 	var suc bool
 	var id int64
 	if cu.Action == "AUTHORIZE" {
+		d.Log.Debug("before connection test")
 		if !d.testConnection() {
 			d.DB.Connect()
 		}
+		d.Log.Debug("after connection test")
 		cu.SecureURL = cleanURL(cu.SecureURL)
 		//fmt.Println("cu.SecureURL", cu.SecureURL)
 		var a []interface{}
@@ -71,18 +82,21 @@ func (d *DCartDeligate) AddUser(cu *DCartUser) (bool, int64) {
 		if rowPtr != nil {
 			foundRow := rowPtr.Row
 			if len(foundRow) > 0 {
-				log.Println("Found existing record")
+				d.Log.Debug("Found existing record")
 				fid, err := strconv.ParseInt(foundRow[0], 10, 64)
-				if err != nil {
-					log.Println("error converting id to int64: ", err)
+				d.Log.Debug("int64 in found parse err: ", err)
+				// if err != nil {
+				// 	log.Println("error converting id to int64: ", err)
+				// }
+				if err == nil {
+					var au []interface{}
+					au = append(au, cu.PublicKey, cu.TokenKey, cu.Action, time.Now(), fid)
+					usec := d.DB.Update(dcartUpdateStore, au...)
+					suc = usec
+					id = fid
 				}
-				var au []interface{}
-				au = append(au, cu.PublicKey, cu.TokenKey, cu.Action, time.Now(), fid)
-				usec := d.DB.Update(dcartUpdateStore, au...)
-				suc = usec
-				id = fid
 			} else {
-				log.Println("No record found inserting new record record")
+				d.Log.Debug("No record found inserting new record record")
 				var au []interface{}
 				au = append(au, cu.SecureURL, cu.PublicKey, cu.TokenKey, cu.Action, time.Now(), true)
 				isuc, iid := d.DB.Insert(dcartInsertStore, au...)
@@ -108,15 +122,15 @@ func (d *DCartDeligate) RemoveUser(cu *DCartUser) bool {
 		if rowPtr != nil {
 			foundRow := rowPtr.Row
 			if len(foundRow) > 0 {
-				log.Println("Found existing record")
+				d.Log.Debug("Found existing record")
 				fid, err := strconv.ParseInt(foundRow[0], 10, 64)
-				if err != nil {
-					log.Println("error converting id to int64: ", err)
+				d.Log.Debug("int64 parse err: ", err)
+				if err == nil {
+					var au []interface{}
+					au = append(au, cu.Action, time.Now(), fid)
+					usec := d.DB.Update(dcartRemoveStore, au...)
+					rtn = usec
 				}
-				var au []interface{}
-				au = append(au, cu.Action, time.Now(), fid)
-				usec := d.DB.Update(dcartRemoveStore, au...)
-				rtn = usec
 			}
 		}
 	}
@@ -126,7 +140,7 @@ func (d *DCartDeligate) RemoveUser(cu *DCartUser) bool {
 //GetUser GetUser
 func (d *DCartDeligate) GetUser(url string) *DCartUser {
 	if !d.testConnection() {
-		log.Println("test database failed in get user, reconnection database")
+		d.Log.Debug("test database failed in get user, reconnection database")
 		d.DB.Connect()
 	}
 	var rtn DCartUser
@@ -137,14 +151,13 @@ func (d *DCartDeligate) GetUser(url string) *DCartUser {
 	if len(rowPtr.Row) != 0 {
 		//fid, err := strconv.ParseInt(foundRow[0], 10, 64)
 		foundRow := rowPtr.Row
-		rtn.SecureURL = foundRow[1]
-		rtn.PublicKey = foundRow[2]
-		rtn.TokenKey = foundRow[3]
-		rtn.Action = foundRow[4]
 		enabled, err := strconv.ParseBool(foundRow[7])
-		if err != nil {
-			log.Print(err)
-		} else {
+		d.Log.Debug("bool parse err: ", err)
+		if err == nil {
+			rtn.SecureURL = foundRow[1]
+			rtn.PublicKey = foundRow[2]
+			rtn.TokenKey = foundRow[3]
+			rtn.Action = foundRow[4]
 			rtn.Enabled = enabled
 		}
 	}
@@ -155,15 +168,14 @@ func (d *DCartDeligate) testConnection() bool {
 	var rtn = false
 	var a []interface{}
 	rowPtr := d.DB.Test(dcartTest, a...)
-	//log.Println("rowPtr", rowPtr)
 	if len(rowPtr.Row) != 0 {
 		foundRow := rowPtr.Row
 		int64Val, err := strconv.ParseInt(foundRow[0], 10, 0)
-		//log.Print("Records found during test ")
+		d.Log.Debug("int64 parse err: ", err)
 		//log.Println("Records found during test :", int64Val)
-		if err != nil {
-			log.Print(err)
-		}
+		// if err != nil {
+		// 	log.Print(err)
+		// }
 		if int64Val >= 0 {
 			rtn = true
 		}

@@ -1,19 +1,21 @@
 package handlers
 
 import (
-	dcd "FindByFlic/dbdelegate"
-	ffl "FindByFlic/fflfinder"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+
+	dcd "github.com/Ulbora/FindByFlic/dbdelegate"
+	ffl "github.com/Ulbora/FindByFlic/fflfinder"
+
 	//"html/template"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	mydb "github.com/Ulbora/dbinterface/mysql"
+	mydb "github.com/Ulbora/dbinterface_mysql"
 	api "github.com/Ulbora/dcartapi"
 )
 
