@@ -27,23 +27,44 @@ package handlers
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 
 	del "github.com/Ulbora/FindByFlic/dbdelegate"
-	ffl "github.com/Ulbora/FindByFlic/fflfinder"
+	flc "github.com/Ulbora/FindByFlic/flicfinder"
+	lg "github.com/Ulbora/Level_Logger"
 	api "github.com/Ulbora/dcartapi"
 	usession "github.com/Ulbora/go-better-sessions"
 	"github.com/gorilla/sessions"
 )
 
 //Handler Handler
-type Handler struct {
+type Handler interface {
+	HandleIndex(w http.ResponseWriter, r *http.Request)
+
+	HandleDcartIndex(w http.ResponseWriter, r *http.Request)
+	HandleDcartConfig(w http.ResponseWriter, r *http.Request)
+	HandleDcartCb(w http.ResponseWriter, r *http.Request)
+
+	HandleDcartFindFFL(w http.ResponseWriter, r *http.Request)
+	HandleDcartChooseFFL(w http.ResponseWriter, r *http.Request)
+	HandleDcartShipFFL(w http.ResponseWriter, r *http.Request)
+	HandleDcartShipFFLAddress(w http.ResponseWriter, r *http.Request)
+
+	// //REST handers
+	HandleFFLList(w http.ResponseWriter, r *http.Request)
+	HandleFFLGet(w http.ResponseWriter, r *http.Request)
+	HandleFFLAddAddress(w http.ResponseWriter, r *http.Request)
+}
+
+//FlicHandler FlicHandler
+type FlicHandler struct {
 	Templates    *template.Template
-	FindFFLDCart del.FindFFLDCart
+	DCartUserDel del.DCartUserDelegate
 	Sess         usession.Session
-	FFLFinder    ffl.FFLFinder
-	DcartAPI     api.DcartAPI
+	//FFLFinder    ffl.FFLFinder
+	FlicFinder flc.Finder
+	DcartAPI   api.DcartAPI
+	Log        *lg.Logger
 }
 
 //PageParams PageParams
@@ -58,8 +79,10 @@ type PageParams struct {
 
 //FFLPageParams FFLPageParams
 type FFLPageParams struct {
-	FFLList *[]ffl.FFL
-	FFL     *ffl.FFL
+	//FFLList *[]ffl.FFL
+	//FFL     *ffl.FFL
+	FFLList *[]flc.FlicList
+	FFL     *flc.Flic
 	Zip     string
 	Name    string
 	Address string
@@ -67,17 +90,22 @@ type FFLPageParams struct {
 	Enabled string
 }
 
-func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
+//GetNew GetNew
+func (h *FlicHandler) GetNew() Handler {
+	return h
+}
+
+func (h *FlicHandler) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	session, err := h.Sess.GetSession(r)
 	if err != nil {
-		log.Println("get session error: ", err)
+		h.Log.Debug("get session error: ", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	return session
 }
 
 //HandleIndex HandleIndex
-func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
+func (h *FlicHandler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	h.Sess.InitSessionStore(w, r)
 	var order = r.URL.Query().Get("order")
 	var carturl = r.URL.Query().Get("carturl")
@@ -85,9 +113,10 @@ func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	session.Values["order"] = order
 	session.Values["carturl"] = carturl
 	serr := session.Save(r, w)
-	if serr != nil {
-		log.Println(serr)
-	}
+	h.Log.Debug("Save Session err: ", serr)
+	// if serr != nil {
+	// 	h.Log.Debug(serr)
+	// }
 
 	// 	SecureUrl: 3dcart merchant's Secure URL.
 	// PrivateKey: Your application's private key.

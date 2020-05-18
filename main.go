@@ -33,13 +33,16 @@ import (
 	"os"
 
 	dcd "github.com/Ulbora/FindByFlic/dbdelegate"
-	ffl "github.com/Ulbora/FindByFlic/fflfinder"
+	flc "github.com/Ulbora/FindByFlic/flicfinder"
 	hand "github.com/Ulbora/FindByFlic/handlers"
 	mydb "github.com/Ulbora/dbinterface_mysql"
 	api "github.com/Ulbora/dcartapi"
 	usession "github.com/Ulbora/go-better-sessions"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	//px "github.com/Ulbora/GoProxy"
+	lg "github.com/Ulbora/Level_Logger"
 )
 
 const (
@@ -48,10 +51,13 @@ const (
 )
 
 var templates *template.Template
-var h hand.Handler
+var fh hand.FlicHandler
 var s usession.Session
 
 func main() {
+	var l lg.Logger
+	l.LogLevel = lg.AllLevel
+
 	var privateKey string
 	if len(os.Args) >= 2 {
 		privateKey = os.Args[1]
@@ -61,7 +67,7 @@ func main() {
 	}
 	var dapi api.API
 	dapi.PrivateKey = privateKey
-	h.DcartAPI = &dapi
+	fh.DcartAPI = &dapi
 
 	s.MaxAge = sessingTimeToLive
 	s.Name = userSession
@@ -70,21 +76,30 @@ func main() {
 	} else {
 		s.SessionKey = "115722gggg14ddfg4567"
 	}
-	h.Sess = s
+	fh.Sess = s
 
-	userDb := connectUserDB(&h)
+	userDb := connectUserDB(&fh)
 	defer userDb.DB.Close()
-	fmt.Println("del db: ", h.FindFFLDCart)
+	fmt.Println("del db: ", fh.DCartUserDel)
 
-	fflDb := connectFFLDB(&h)
-	defer fflDb.DB.Close()
-	fmt.Println("del db: ", h.FFLFinder)
+	//fflDb := connectFFLDB(&h)
+	//defer fflDb.DB.Close()
+	var flicFinder flc.FlicFinder
 
-	h.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html",
+	flicFinder.Log = &l
+	fh.FlicFinder = &flicFinder
+	userDb.Log = &l
+
+	//var gp px.GoProxy
+
+	fmt.Println("del db: ", fh.FlicFinder)
+
+	fh.Templates = template.Must(template.ParseFiles("./static/index.html", "./static/dcartIndex.html",
 		"./static/dcartConfig.html", "./static/head.html", "./static/dcartAddFfl.html",
 		"./static/dcartChosenFfl.html", "./static/dcartShippedFfl.html", "./static/dcartShipFflAddress.html"))
 	//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
 	router := mux.NewRouter()
+	h := fh.GetNew()
 	//dcart
 	router.HandleFunc("/", h.HandleIndex).Methods("GET")
 	router.HandleFunc("/dcart", h.HandleDcartIndex).Methods("GET")
@@ -105,7 +120,7 @@ func main() {
 
 	log.Println("Online Account Creator!")
 	log.Println("Listening on :8070...")
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "secureurl", "Content-Type"})
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "SecureURL", "Content-Type", "Origin"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	http.ListenAndServe(":8070", handlers.CORS(headersOk, originsOk, methodsOk)(router))
@@ -114,7 +129,7 @@ func main() {
 
 }
 
-func connectUserDB(h *hand.Handler) *dcd.DCartDeligate {
+func connectUserDB(h *hand.FlicHandler) *dcd.DCartDeligate {
 	var dcDel dcd.DCartDeligate
 	var mdb = new(mydb.MyDB)
 	if os.Getenv("DATABASE_HOST") != "" {
@@ -145,43 +160,43 @@ func connectUserDB(h *hand.Handler) *dcd.DCartDeligate {
 	if !suc {
 		log.Println("User DB connect failed")
 	}
-	h.FindFFLDCart = &dcDel
+	h.DCartUserDel = &dcDel
 	return &dcDel
 }
 
-func connectFFLDB(h *hand.Handler) *ffl.Finder {
-	var finder ffl.Finder
-	var fflmdb = new(mydb.MyDB)
-	if os.Getenv("FFL_DATABASE_HOST") != "" {
-		fflmdb.Host = os.Getenv("FFL_DATABASE_HOST")
-	} else {
-		fflmdb.Host = "localhost:3306"
-	}
+// func connectFFLDB(h *hand.Handler) *ffl.Finder {
+// 	var finder ffl.Finder
+// 	var fflmdb = new(mydb.MyDB)
+// 	if os.Getenv("FFL_DATABASE_HOST") != "" {
+// 		fflmdb.Host = os.Getenv("FFL_DATABASE_HOST")
+// 	} else {
+// 		fflmdb.Host = "localhost:3306"
+// 	}
 
-	if os.Getenv("FFL_DATABASE_USER_NAME") != "" {
-		fflmdb.User = os.Getenv("FFL_DATABASE_USER_NAME")
-	} else {
-		fflmdb.User = "admin"
-	}
+// 	if os.Getenv("FFL_DATABASE_USER_NAME") != "" {
+// 		fflmdb.User = os.Getenv("FFL_DATABASE_USER_NAME")
+// 	} else {
+// 		fflmdb.User = "admin"
+// 	}
 
-	if os.Getenv("FFL_DATABASE_USER_PASSWORD") != "" {
-		fflmdb.Password = os.Getenv("FFL_DATABASE_USER_PASSWORD")
-	} else {
-		fflmdb.Password = "admin"
-	}
+// 	if os.Getenv("FFL_DATABASE_USER_PASSWORD") != "" {
+// 		fflmdb.Password = os.Getenv("FFL_DATABASE_USER_PASSWORD")
+// 	} else {
+// 		fflmdb.Password = "admin"
+// 	}
 
-	if os.Getenv("FFL_DATABASE_NAME") != "" {
-		fflmdb.Database = os.Getenv("FFL_DATABASE_NAME")
-	} else {
-		fflmdb.Database = "ffl_list_10012018"
-	}
-	finder.DB = fflmdb
-	suc := finder.DB.Connect()
-	if !suc {
-		log.Println("FFL DB connect failed")
-	}
-	h.FFLFinder = &finder
-	return &finder
-}
+// 	if os.Getenv("FFL_DATABASE_NAME") != "" {
+// 		fflmdb.Database = os.Getenv("FFL_DATABASE_NAME")
+// 	} else {
+// 		fflmdb.Database = "ffl_list_10012018"
+// 	}
+// 	finder.DB = fflmdb
+// 	suc := finder.DB.Connect()
+// 	if !suc {
+// 		log.Println("FFL DB connect failed")
+// 	}
+// 	h.FFLFinder = &finder
+// 	return &finder
+// }
 
 //go mod init github.com/Ulbora/FindByFlic

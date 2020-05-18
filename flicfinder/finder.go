@@ -22,6 +22,10 @@ type Flic struct {
 	LicName        string `json:"licenseName"`
 	BusName        string `json:"businessName"`
 	PremiseAddress string `json:"premiseAddress"`
+	Address        string `json:"address"`
+	City           string `json:"city"`
+	State          string `json:"state"`
+	PremiseZip     string `json:"premiseZip"`
 	MailingAddress string `json:"mailingAddress"`
 	Phone          string `json:"phone"`
 }

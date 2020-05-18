@@ -45,8 +45,8 @@ type DCartUser struct {
 	Enabled   bool
 }
 
-//FindFFLDCart FindFFLDCart
-type FindFFLDCart interface {
+//DCartUserDelegate DCartUserDelegate
+type DCartUserDelegate interface {
 	AddUser(cu *DCartUser) (bool, int64)
 	RemoveUser(cu *DCartUser) bool
 	GetUser(url string) *DCartUser
@@ -59,7 +59,7 @@ type DCartDeligate struct {
 }
 
 //GetNew GetNew
-func (d *DCartDeligate) GetNew() FindFFLDCart {
+func (d *DCartDeligate) GetNew() DCartUserDelegate {
 	return d
 }
 

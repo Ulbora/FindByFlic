@@ -10,7 +10,7 @@ import (
 	mydb "github.com/Ulbora/dbinterface_mysql"
 )
 
-var dcarti FindFFLDCart
+var dcarti DCartUserDelegate
 var dcDeli DCartDeligate
 
 //var dbi dbi.Database

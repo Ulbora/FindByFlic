@@ -1,4 +1,7 @@
 mode: set
+github.com/Ulbora/FindByFlic/flicfinder/MockFlicFinder.go:19.42,21.2 1 1
+github.com/Ulbora/FindByFlic/flicfinder/MockFlicFinder.go:24.68,26.2 1 1
+github.com/Ulbora/FindByFlic/flicfinder/MockFlicFinder.go:29.56,31.2 1 1
 github.com/Ulbora/FindByFlic/flicfinder/flicFinder.go:27.38,29.2 1 1
 github.com/Ulbora/FindByFlic/flicfinder/flicFinder.go:32.64,39.17 7 1
 github.com/Ulbora/FindByFlic/flicfinder/flicFinder.go:49.2,49.13 1 1

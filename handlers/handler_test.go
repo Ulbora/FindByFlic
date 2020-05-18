@@ -32,21 +32,27 @@ import (
 
 	"testing"
 
+	lg "github.com/Ulbora/Level_Logger"
 	usession "github.com/Ulbora/go-better-sessions"
 	//"github.com/gorilla/sessions"
 )
 
 func TestHandler_HandleIndex(t *testing.T) {
-	var h Handler
-	h.Templates = template.Must(template.ParseFiles("index.html"))
+	var fh FlicHandler
+	var l lg.Logger
+	l.LogLevel = lg.AllLevel
+	fh.Log = &l
+
+	fh.Templates = template.Must(template.ParseFiles("testhtml/index.html"))
 	//h.TokenMap = make(map[string]*oauth2.Token)
 	var s usession.Session
-	h.Sess = s
+	fh.Sess = s
 	r, _ := http.NewRequest("GET", "/challenge?route=challenge&fpath=rs/challenge/en_us?g=g&b=b", nil)
 	w := httptest.NewRecorder()
-	h.Sess.InitSessionStore(w, r)
-	session, _ := h.Sess.GetSession(r)
+	fh.Sess.InitSessionStore(w, r)
+	session, _ := fh.Sess.GetSession(r)
 	session.Values["accessTokenKey"] = "123456"
+	h := fh.GetNew()
 	//var resp oauth2.Token
 	//resp.AccessToken = "bbbnn"
 	//h.TokenMap["123456"] = &resp
@@ -54,26 +60,33 @@ func TestHandler_HandleIndex(t *testing.T) {
 }
 
 func TestHandler_getSession(t *testing.T) {
-	var h Handler
+	var fh FlicHandler
 	var s usession.Session
-	h.Sess = s
+	fh.Sess = s
+	var l lg.Logger
+	l.LogLevel = lg.AllLevel
+	fh.Log = &l
 	r, _ := http.NewRequest("GET", "/challenge?route=challenge&fpath=rs/challenge/en_us?g=g&b=b", nil)
 	w := httptest.NewRecorder()
-	h.Sess.InitSessionStore(w, r)
-	ss := h.getSession(w, r)
+	fh.Sess.InitSessionStore(w, r)
+	//h := fh.GetNew()
+	ss := fh.getSession(w, r)
 	if ss == nil {
 		t.Fail()
 	}
 }
 
 func TestHandler_getSessionFail(t *testing.T) {
-	var h Handler
+	var fh FlicHandler
+	var l lg.Logger
+	l.LogLevel = lg.AllLevel
+	fh.Log = &l
 	//var s usession.Session
 	//h.Sess = s
 	r, _ := http.NewRequest("GET", "/challenge?route=challenge&fpath=rs/challenge/en_us?g=g&b=b", nil)
 	w := httptest.NewRecorder()
 	//h.Sess.InitSessionStore(w, r)
-	ss := h.getSession(w, r)
+	ss := fh.getSession(w, r)
 	if ss != nil {
 		t.Fail()
 	}

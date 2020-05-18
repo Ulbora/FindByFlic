@@ -1,5 +1,5 @@
 mode: set
-github.com/Ulbora/FindByFlic/dbdelegate/dcartDel.go:62.47,64.2 1 1
+github.com/Ulbora/FindByFlic/dbdelegate/dcartDel.go:62.52,64.2 1 1
 github.com/Ulbora/FindByFlic/dbdelegate/dcartDel.go:67.62,71.30 4 1
 github.com/Ulbora/FindByFlic/dbdelegate/dcartDel.go:108.2,108.16 1 1
 github.com/Ulbora/FindByFlic/dbdelegate/dcartDel.go:71.30,73.26 2 1
@@ -31,3 +31,7 @@ github.com/Ulbora/FindByFlic/dbdelegate/dcartDel.go:186.34,188.37 2 1
 github.com/Ulbora/FindByFlic/dbdelegate/dcartDel.go:194.2,194.12 1 1
 github.com/Ulbora/FindByFlic/dbdelegate/dcartDel.go:188.37,190.3 1 1
 github.com/Ulbora/FindByFlic/dbdelegate/dcartDel.go:190.8,192.3 1 1
+github.com/Ulbora/FindByFlic/dbdelegate/mockDcartDel.go:19.56,21.2 1 1
+github.com/Ulbora/FindByFlic/dbdelegate/mockDcartDel.go:24.66,26.2 1 1
+github.com/Ulbora/FindByFlic/dbdelegate/mockDcartDel.go:29.60,31.2 1 1
+github.com/Ulbora/FindByFlic/dbdelegate/mockDcartDel.go:34.60,36.2 1 1
