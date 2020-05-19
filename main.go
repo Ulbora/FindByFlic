@@ -41,7 +41,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	//px "github.com/Ulbora/GoProxy"
+	px "github.com/Ulbora/GoProxy"
 	lg "github.com/Ulbora/Level_Logger"
 )
 
@@ -57,17 +57,21 @@ var s usession.Session
 func main() {
 	var l lg.Logger
 	l.LogLevel = lg.AllLevel
+	fh.Log = &l
 
-	var privateKey string
-	if len(os.Args) >= 2 {
-		privateKey = os.Args[1]
-	}
-	if privateKey == "" {
-		privateKey = os.Getenv("PRIVATE_KEY")
-	}
+	// var privateKey string
+	// if len(os.Args) >= 2 {
+	// 	privateKey = os.Args[1]
+	// }
+	//if privateKey == "" {
+	var privateKey = os.Getenv("DCART_PRIVATE_KEY")
+	//}
+	fh.Log.Debug("privateKey: ", privateKey)
 	var dapi api.API
 	dapi.PrivateKey = privateKey
 	fh.DcartAPI = &dapi
+	var gpdc px.GoProxy
+	dapi.Proxy = &gpdc
 
 	s.MaxAge = sessingTimeToLive
 	s.Name = userSession
@@ -85,12 +89,28 @@ func main() {
 	//fflDb := connectFFLDB(&h)
 	//defer fflDb.DB.Close()
 	var flicFinder flc.FlicFinder
+	var flicFinderURL string
+	var flicFinderAPIKey string
+	if os.Getenv("FLIC_FINDER_URL") != "" {
+		flicFinderURL = os.Getenv("FLIC_FINDER_URL")
+	} else {
+		flicFinderURL = "http://localhost:3000"
+	}
 
+	if os.Getenv("FLIC_FINDER_API_KEY") != "" {
+		flicFinderAPIKey = os.Getenv("FLIC_FINDER_API_KEY")
+	} else {
+		flicFinderAPIKey = "61616dfggdf5g64gf4"
+	}
+
+	flicFinder.FlicURL = flicFinderURL
+	flicFinder.APIKey = flicFinderAPIKey
 	flicFinder.Log = &l
 	fh.FlicFinder = &flicFinder
 	userDb.Log = &l
 
-	//var gp px.GoProxy
+	var gp px.GoProxy
+	flicFinder.Proxy = &gp
 
 	fmt.Println("del db: ", fh.FlicFinder)
 
@@ -100,6 +120,7 @@ func main() {
 	//h.Templates = template.Must(template.ParseFiles("./static/index.html"))
 	router := mux.NewRouter()
 	h := fh.GetNew()
+	l.LogLevel = lg.OffLevel
 	//dcart
 	router.HandleFunc("/", h.HandleIndex).Methods("GET")
 	router.HandleFunc("/dcart", h.HandleDcartIndex).Methods("GET")
@@ -114,11 +135,13 @@ func main() {
 	router.HandleFunc("/dcart/rs/ffl/{id}", h.HandleFFLGet).Methods("GET")
 	router.HandleFunc("/dcart/rs/shipment", h.HandleFFLAddAddress).Methods("POST")
 
+	router.HandleFunc("/rs/loglevel", h.SetLogLevel).Methods("POST")
+
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	//<iframe src="https://localhost:8060"></iframe>
 
-	log.Println("Online Account Creator!")
+	log.Println("Find by Flic!")
 	log.Println("Listening on :8070...")
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "SecureURL", "Content-Type", "Origin"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})

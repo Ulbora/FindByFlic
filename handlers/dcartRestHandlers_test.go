@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 
 	dcd "github.com/Ulbora/FindByFlic/dbdelegate"
-	ffl "github.com/Ulbora/FindByFlic/fflfinder"
+
 	flc "github.com/Ulbora/FindByFlic/flicfinder"
 	lg "github.com/Ulbora/Level_Logger"
 	"github.com/gorilla/mux"
@@ -20,36 +20,8 @@ import (
 )
 
 var dcDelResth dcd.DCartDeligate
-var finderh ffl.Finder
+
 var hh FlicHandler
-
-// func TestHandlerRest_initFFLUserList(t *testing.T) {
-// 	var mdb mydb.MyDB
-// 	mdb.Host = "localhost:3306"
-// 	mdb.User = "admin"
-// 	mdb.Password = "admin"
-// 	mdb.Database = "dcart_flic"
-// 	dcDelRest.DB = &mdb
-// 	h.FindFFLDCart = &dcDelRest
-// 	suc := dcDelRest.DB.Connect()
-// 	if !suc {
-// 		t.Fail()
-// 	}
-// }
-
-// func TestHandlerRest_initFFLList(t *testing.T) {
-// 	var mdb mydb.MyDB
-// 	mdb.Host = "localhost:3306"
-// 	mdb.User = "admin"
-// 	mdb.Password = "admin"
-// 	mdb.Database = "ffl_list_10012018"
-// 	finder.DB = &mdb
-// 	h.FFLFinder = &finder
-// 	suc := finder.DB.Connect()
-// 	if !suc {
-// 		t.Fail()
-// 	}
-// }
 
 func TestHandlerRest_HandleFFLListFail(t *testing.T) {
 	var fh FlicHandler
@@ -757,147 +729,3 @@ func TestHandlerRest_HandleFFLAddAddressBadReq(t *testing.T) {
 		t.Fail()
 	}
 }
-
-// func TestHandlerRest_HandleFFLAddAddressMedia(t *testing.T) {
-// 	var dapi api.API
-// 	var secureURL string
-// 	if len(os.Args) > 3 {
-// 		privateKey := os.Args[2]
-// 		secureURL = os.Args[3]
-// 		//token := os.Args[3]
-// 		//secureURL = os.Args[3]
-// 		dapi.PrivateKey = privateKey
-// 		//dapi.Token = token
-// 		//dapi.SecureURL = secureURL
-
-// 		log.Println("privateKey: ", privateKey)
-// 		//log.Println("token: ", token)
-// 		//log.Println("secureURL: ", secureURL)
-// 		h.DcartAPI = &dapi
-// 	}
-// 	var req AddressRequest
-// 	req.FFLID = "302"
-// 	req.Invoice = "1054"
-// 	aJSON, _ := json.Marshal(req)
-// 	r, _ := http.NewRequest("POST", "/ffllist", bytes.NewBuffer(aJSON))
-// 	//r.Header.Set("Content-Type", "application/json")
-// 	r.Header.Set("SecureURL", secureURL)
-// 	w := httptest.NewRecorder()
-// 	h.HandleFFLAddAddress(w, r)
-// 	fmt.Println("body: ", w.Code)
-// 	if w.Code != 415 {
-// 		t.Fail()
-// 	}
-// }
-
-// func TestHandlerRest_HandleFFLAddAddressReq(t *testing.T) {
-// 	var dapi api.API
-// 	var secureURL string
-// 	if len(os.Args) > 3 {
-// 		privateKey := os.Args[2]
-// 		secureURL = os.Args[3]
-// 		//token := os.Args[3]
-// 		//secureURL = os.Args[3]
-// 		dapi.PrivateKey = privateKey
-// 		//dapi.Token = token
-// 		//dapi.SecureURL = secureURL
-
-// 		log.Println("privateKey: ", privateKey)
-// 		//log.Println("token: ", token)
-// 		//log.Println("secureURL: ", secureURL)
-// 		h.DcartAPI = &dapi
-// 	}
-// 	var req AddressRequest
-// 	//req.FFLID = "302"
-// 	req.Invoice = "1054"
-// 	aJSON, _ := json.Marshal(req)
-// 	r, _ := http.NewRequest("POST", "/ffllist", bytes.NewBuffer(aJSON))
-// 	r.Header.Set("Content-Type", "application/json")
-// 	r.Header.Set("SecureURL", secureURL)
-// 	w := httptest.NewRecorder()
-// 	h.HandleFFLAddAddress(w, r)
-// 	fmt.Println("body: ", w.Code)
-// 	if w.Code != 400 {
-// 		t.Fail()
-// 	}
-// }
-
-// func TestHandlerRest_HandleFFLAddAddressReq2(t *testing.T) {
-// 	var dapi api.API
-// 	var secureURL string
-// 	if len(os.Args) > 3 {
-// 		privateKey := os.Args[2]
-// 		secureURL = os.Args[3]
-// 		//token := os.Args[3]
-// 		//secureURL = os.Args[3]
-// 		dapi.PrivateKey = privateKey
-// 		//dapi.Token = token
-// 		//dapi.SecureURL = secureURL
-
-// 		log.Println("privateKey: ", privateKey)
-// 		//log.Println("token: ", token)
-// 		//log.Println("secureURL: ", secureURL)
-// 		h.DcartAPI = &dapi
-// 	}
-// 	var req AddressRequest
-// 	req.FFLID = "302a"
-// 	req.Invoice = "1054"
-// 	aJSON, _ := json.Marshal(req)
-// 	r, _ := http.NewRequest("POST", "/ffllist", bytes.NewBuffer(aJSON))
-// 	r.Header.Set("Content-Type", "application/json")
-// 	r.Header.Set("SecureURL", secureURL)
-// 	w := httptest.NewRecorder()
-// 	h.HandleFFLAddAddress(w, r)
-// 	fmt.Println("body: ", w.Code)
-// 	if w.Code != 200 {
-// 		t.Fail()
-// 	}
-// }
-
-// func TestHandlerRest_HandleFFLAddAddressAuth(t *testing.T) {
-// 	var dapi api.API
-// 	//var secureURL string
-// 	if len(os.Args) > 3 {
-// 		privateKey := os.Args[2]
-// 		//secureURL = os.Args[3]
-// 		//token := os.Args[3]
-// 		//secureURL = os.Args[3]
-// 		dapi.PrivateKey = privateKey
-// 		//dapi.Token = token
-// 		//dapi.SecureURL = secureURL
-
-// 		log.Println("privateKey: ", privateKey)
-// 		//log.Println("token: ", token)
-// 		//log.Println("secureURL: ", secureURL)
-// 		h.DcartAPI = &dapi
-// 	}
-// 	var req AddressRequest
-// 	req.FFLID = "302"
-// 	req.Invoice = "1054"
-// 	aJSON, _ := json.Marshal(req)
-// 	r, _ := http.NewRequest("POST", "/ffllist", bytes.NewBuffer(aJSON))
-// 	r.Header.Set("Content-Type", "application/json")
-// 	r.Header.Set("SecureURL", "some.net")
-// 	w := httptest.NewRecorder()
-// 	h.HandleFFLAddAddress(w, r)
-// 	fmt.Println("body: ", w.Code)
-// 	if w.Code != 200 {
-// 		t.Fail()
-// 	}
-// }
-
-// func TestHandlerRest_close(t *testing.T) {
-// 	suc := dcDelRest.DB.Close()
-// 	fmt.Println("closing db")
-// 	if !suc {
-// 		t.Fail()
-// 	}
-// }
-
-// func TestHandlerRest_close2(t *testing.T) {
-// 	suc := finder.DB.Close()
-// 	fmt.Println("closing db")
-// 	if !suc {
-// 		t.Fail()
-// 	}
-// }

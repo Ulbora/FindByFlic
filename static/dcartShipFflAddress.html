@@ -15,12 +15,12 @@
             <table class="ui unstackable selectable celled table">
                 <tbody>
                     <tr>
-                        {{if ne .FFL.BusinessName "NULL"}}
-                            <td>{{.FFL.BusinessName}}</td>
-                            <td>{{.FFL.PremiseStreet}}, {{.FFL.PremiseCity}}, {{.FFL.PremiseState}} </td>
+                        {{if ne .FFL.BusName ""}}
+                            <td>{{.FFL.BusName}}</td>
+                            <td>{{.FFL.PremiseAddress}} </td>
                         {{else}}
-                            <td>{{.FFL.LicenseName}}</td>
-                            <td>{{.FFL.PremiseStreet}}, {{.FFL.PremiseCity}}, {{.FFL.PremiseState}} </td>
+                            <td>{{.FFL.LicName}}</td>
+                            <td>{{.FFL.PremiseAddress}} </td>
                         {{end}}
 
                     </tr>

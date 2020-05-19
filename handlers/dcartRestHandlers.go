@@ -52,6 +52,7 @@ func (h *FlicHandler) HandleFFLGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	url := r.Header.Get("SecureURL")
 	ures := h.DCartUserDel.GetUser(url)
+	h.Log.Debug("user found before if: ", *ures)
 	if ures.Enabled {
 		var id string
 		vars := mux.Vars(r)
@@ -93,9 +94,9 @@ func (h *FlicHandler) HandleFFLAddAddress(w http.ResponseWriter, r *http.Request
 			} else {
 				res := h.FlicFinder.FindFlicByID(addReq.FFLID)
 				h.Log.Debug("ffl lic rest: ", *res)
-				h.Log.Debug("addReq before getOrder: ", addReq)
+				h.Log.Debug("addReq before getOrder: ", *addReq)
 				odr := h.DcartAPI.GetOrder(addReq.Invoice, ures.SecureURL, ures.TokenKey)
-				h.Log.Debug("odr: ", odr)
+				h.Log.Debug("odr: ", *odr)
 				if odr.OrderID != 0 && res.Key != "" {
 					var s api.Shipment
 					s.ShipmentID = 0

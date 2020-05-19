@@ -42,25 +42,6 @@ import (
 	usession "github.com/Ulbora/go-better-sessions"
 )
 
-// var dcart dcd.FindFFLDCart
-// var dcDel dcd.DCartDeligate
-// var db dbi.Database
-
-// func TestHandler_init(t *testing.T) {
-// 	var mdb mydb.MyDB
-// 	mdb.Host = "localhost:3306"
-// 	mdb.User = "admin"
-// 	mdb.Password = "admin"
-// 	mdb.Database = "dcart_flic"
-// 	db = &mdb
-// 	dcDel.DB = db
-// 	dcart = &dcDel
-// 	suc := dcDel.DB.Connect()
-// 	if !suc {
-// 		t.Fail()
-// 	}
-// }
-
 func TestHandler_HandleDcartIndex(t *testing.T) {
 	var fh FlicHandler
 	var dcDelRest dcd.MockDCartDeligate
@@ -494,92 +475,6 @@ func TestHandler_HandleDcartCbBadJsonReq(t *testing.T) {
 	}
 }
 
-// func TestHandler_HandleDcartIndexUrl(t *testing.T) {
-// 	var h FlicHandler
-// 	h.FindFFLDCart = dcart
-// 	h.Templates = template.Must(template.ParseFiles("testhtml/dcartIndex.html"))
-// 	//h.TokenMap = make(map[string]*oauth2.Token)
-// 	var s usession.Session
-// 	h.Sess = s
-// 	r, _ := http.NewRequest("GET", "/challenge?carturl=http://someurl", nil)
-// 	w := httptest.NewRecorder()
-// 	h.Sess.InitSessionStore(w, r)
-// 	session, _ := h.Sess.GetSession(r)
-// 	session.Save(r, w)
-// 	//var resp oauth2.Token
-// 	//resp.AccessToken = "bbbnn"
-// 	//h.TokenMap["123456"] = &resp
-// 	h.HandleDcartIndex(w, r)
-
-// 	fmt.Println("body: ", w.Code)
-// 	if w.Code != 200 {
-// 		t.Fail()
-// 	}
-// }
-
-// func TestHandler_HandleDcartCbMedia(t *testing.T) {
-// 	var h FlicHandler
-// 	h.FindFFLDCart = dcart
-// 	dcu := new(dcd.DCartUser)
-// 	dcu.Action = "AUTHORIZE"
-// 	dcu.PublicKey = "123456"
-// 	dcu.SecureURL = "http://someurl"
-// 	dcu.TokenKey = "123456"
-// 	dcu.TimeStamp = "12-25-2018 01:01:00"
-// 	aJSON, _ := json.Marshal(dcu)
-
-// 	r, _ := http.NewRequest("POST", "/challenge", bytes.NewBuffer(aJSON))
-// 	//r.Header.Set("Content-Type", "application/json")
-// 	w := httptest.NewRecorder()
-// 	h.HandleDcartCb(w, r)
-// 	fmt.Println("body: ", w.Code)
-// 	if w.Code != 415 {
-// 		t.Fail()
-// 	}
-// }
-
-// func TestHandler_HandleDcartCbRemove(t *testing.T) {
-// 	var h FlicHandler
-// 	h.FindFFLDCart = dcart
-// 	dcu := new(dcd.DCartUser)
-// 	dcu.Action = "REMOVE"
-// 	dcu.PublicKey = "123456"
-// 	dcu.SecureURL = "http://someurl"
-// 	dcu.TokenKey = "123456"
-// 	dcu.TimeStamp = "12-25-2018 01:01:00"
-// 	aJSON, _ := json.Marshal(dcu)
-
-// 	r, _ := http.NewRequest("POST", "/challenge", bytes.NewBuffer(aJSON))
-// 	r.Header.Set("Content-Type", "application/json")
-// 	w := httptest.NewRecorder()
-// 	h.HandleDcartCb(w, r)
-// 	fmt.Println("body: ", w.Code)
-// 	if w.Code != 200 {
-// 		t.Fail()
-// 	}
-// }
-
-// func TestHandler_HandleDcartCbRemoveFail(t *testing.T) {
-// 	var h FlicHandler
-// 	h.FindFFLDCart = dcart
-// 	dcu := new(dcd.DCartUser)
-// 	dcu.Action = "REMOVE1"
-// 	dcu.PublicKey = "123456"
-// 	dcu.SecureURL = "http://someurl"
-// 	dcu.TokenKey = "123456"
-// 	dcu.TimeStamp = "12-25-2018 01:01:00"
-// 	aJSON, _ := json.Marshal(dcu)
-
-// 	r, _ := http.NewRequest("POST", "/challenge", bytes.NewBuffer(aJSON))
-// 	r.Header.Set("Content-Type", "application/json")
-// 	w := httptest.NewRecorder()
-// 	h.HandleDcartCb(w, r)
-// 	fmt.Println("body: ", w.Code)
-// 	if w.Code != 400 {
-// 		t.Fail()
-// 	}
-// }
-
 func TestHandler_HandleDcartFindFFL(t *testing.T) {
 	var fh FlicHandler
 	var dcDelRest dcd.MockDCartDeligate
@@ -739,11 +634,6 @@ func TestHandler_HandleDcartChooseFFL(t *testing.T) {
 	}
 }
 
-// // type TestShip struct{
-// // 	ID string
-// // 	Name string
-// // 	Address string
-// // }
 func TestHandler_HandleDcartShipFFL(t *testing.T) {
 
 	var fh FlicHandler

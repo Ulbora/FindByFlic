@@ -31,13 +31,13 @@
                 </thead>
                 <tbody>
                     {{range .FFLList}}
-                    <tr onclick="window.location.href='/dcartChooseFFL?id={{.ID}}&zip={{$.Zip}}&use={{$.Enabled}}'">
-                        {{if ne .BusinessName "NULL"}}
-                            <td>{{.BusinessName}}</td>
-                            <td>{{.PremiseStreet}}, {{.PremiseCity}}, {{.PremiseState}} </td>
+                    <tr onclick="window.location.href='/dcartChooseFFL?id={{.Key}}&zip={{$.Zip}}&use={{$.Enabled}}'">
+                        {{if ne .BusName ""}}
+                            <td>{{.BusName}}</td>
+                            <td>{{.PremiseAddress}} </td>
                         {{else}}
-                            <td>{{.LicenseName}}</td>
-                            <td>{{.PremiseStreet}}, {{.PremiseCity}}, {{.PremiseState}} </td>
+                            <td>{{.LicName}}</td>
+                            <td>{{.PremiseAddress}}</td>
                         {{end}}
                     </tr>
                     {{end}}

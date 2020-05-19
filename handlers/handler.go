@@ -26,6 +26,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"errors"
 	"html/template"
 	"net/http"
 
@@ -54,6 +56,8 @@ type Handler interface {
 	HandleFFLList(w http.ResponseWriter, r *http.Request)
 	HandleFFLGet(w http.ResponseWriter, r *http.Request)
 	HandleFFLAddAddress(w http.ResponseWriter, r *http.Request)
+
+	SetLogLevel(w http.ResponseWriter, r *http.Request)
 }
 
 //FlicHandler FlicHandler
@@ -134,4 +138,37 @@ func (h *FlicHandler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	// p.Key = privateKey
 	// p.Token = token
 	h.Templates.ExecuteTemplate(w, "index.html", &p)
+}
+
+//CheckContent CheckContent
+func (h *FlicHandler) checkContent(r *http.Request) bool {
+	var rtn bool
+	cType := r.Header.Get("Content-Type")
+	if cType == "application/json" {
+		rtn = true
+	}
+	return rtn
+}
+
+//SetContentType SetContentType
+func (h *FlicHandler) setContentType(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+}
+
+//ProcessBody ProcessBody
+func (h *FlicHandler) processBody(r *http.Request, obj interface{}) (bool, error) {
+	var suc bool
+	var err error
+	if r.Body != nil {
+		decoder := json.NewDecoder(r.Body)
+		err = decoder.Decode(obj)
+		if err != nil {
+			h.Log.Error("Decode Error: ", err.Error())
+		} else {
+			suc = true
+		}
+	} else {
+		err = errors.New("Bad Body")
+	}
+	return suc, err
 }

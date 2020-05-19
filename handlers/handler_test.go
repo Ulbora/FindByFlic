@@ -26,6 +26,8 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/json"
 	"html/template"
 	"net/http"
 	"net/http/httptest"
@@ -88,6 +90,30 @@ func TestHandler_getSessionFail(t *testing.T) {
 	//h.Sess.InitSessionStore(w, r)
 	ss := fh.getSession(w, r)
 	if ss != nil {
+		t.Fail()
+	}
+}
+
+type testObj struct {
+	Valid bool   `json:"valid"`
+	Code  string `json:"code"`
+}
+
+func TestHandler_processBody(t *testing.T) {
+	var oh FlicHandler
+	var l lg.Logger
+	oh.Log = &l
+	var robj testObj
+	robj.Valid = true
+	robj.Code = "3"
+	// var res http.Response
+	// res.Body = ioutil.NopCloser(bytes.NewBufferString(`{"valid":true, "code":"1"}`))
+	var sURL = "http://localhost/test"
+	aJSON, _ := json.Marshal(robj)
+	r, _ := http.NewRequest("POST", sURL, bytes.NewBuffer(aJSON))
+	var obj testObj
+	suc, _ := oh.processBody(r, nil)
+	if suc || obj.Valid != false || obj.Code != "" {
 		t.Fail()
 	}
 }
